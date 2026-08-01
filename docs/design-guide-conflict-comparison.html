@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="data:," />
+    <title>전통혼례 청첩장 디자인 가이드 충돌 비교</title>
+    <style>
+      /* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4
+       * Hallmark · genre: editorial · macrostructure: Long Document · theme: Almanac
+       * audience: design decision makers · use: resolve guide conflicts · tone: austere editorial
+       * enrichment: Tier-A CSS comparison samples · nav: N6 · footer: Ft1
+       * contrast: pass (40–41) · mobile: pass (34, 49, 50–57) · slop: pass (58/58)
+       */
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&display=swap");
+
+      :root {
+        --color-paper: oklch(97.1% 0.009 83);
+        --color-paper-raised: oklch(99% 0.006 83);
+        --color-ink: oklch(22% 0.018 48);
+        --color-ink-soft: oklch(39% 0.02 48);
+        --color-muted: oklch(44% 0.025 54);
+        --color-rule: oklch(81% 0.025 78);
+        --color-rule-strong: oklch(63% 0.035 64);
+        --color-accent: oklch(47.41% 0.1469 24.7);
+        --color-accent-ink: oklch(98% 0.008 78);
+        --color-severity: oklch(43% 0.14 27);
+        --color-severity-soft: oklch(94% 0.026 35);
+        --color-choice: oklch(42% 0.1 75);
+        --color-choice-soft: oklch(95% 0.026 84);
+        --color-compatible: oklch(44% 0.07 149);
+        --color-compatible-soft: oklch(95% 0.024 145);
+        --color-focus: oklch(45% 0.13 245);
+        --color-overlay: oklch(18% 0.015 48 / 0.6);
+
+        --old-ivory: oklch(95.28% 0.0127 86.83);
+        --old-paper: oklch(90.92% 0.0207 81.78);
+        --old-ink: oklch(26.44% 0.0113 122.19);
+        --old-sage: oklch(55.63% 0.0257 135.06);
+        --old-deep-sage: oklch(39.77% 0.0202 142.42);
+        --old-wine: oklch(47.14% 0.0746 25.91);
+        --old-wood: oklch(31.41% 0.0555 47.89);
+        --old-dark-wood: oklch(23.92% 0.0383 45.88);
+        --old-hanji: oklch(91.82% 0.034 86.31);
+        --old-knot-red: oklch(51.53% 0.1375 30.27);
+        --old-knot-blue: oklch(41.43% 0.0716 245.63);
+
+        --new-primary: oklch(56.16% 0.0914 41.94);
+        --new-primary-dark: oklch(44.16% 0.0706 40.57);
+        --new-paper: oklch(96.83% 0.0102 81.8);
+        --new-surface: oklch(98.73% 0.0096 72.66);
+        --new-ink: oklch(28.49% 0.0203 43.78);
+        --new-muted: oklch(55.53% 0.0247 46.77);
+        --new-red: oklch(47.41% 0.1469 24.7);
+        --new-green: oklch(47.51% 0.0451 154.69);
+        --new-gold: oklch(69.67% 0.0803 85.5);
+
+        --font-display: "Noto Serif KR", "AppleMyungjo", "Batang", serif;
+        --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+        --font-data: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+
+        --space-2xs: 0.25rem;
+        --space-xs: 0.5rem;
+        --space-sm: 0.75rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+        --space-3xl: 4.5rem;
+        --space-4xl: 7rem;
+
+        --text-xs: 0.75rem;
+        --text-sm: 0.875rem;
+        --text-base: 1rem;
+        --text-md: 1.25rem;
+        --text-lg: 1.5625rem;
+        --text-xl: 1.953rem;
+        --text-2xl: 2.441rem;
+        --text-display: clamp(2.45rem, 7vw, 5.1rem);
+
+        --radius-sm: 0.25rem;
+        --radius-md: 0.75rem;
+        --radius-pill: 999px;
+        --rule-hair: 1px;
+        --dur-micro: 120ms;
+        --dur-short: 220ms;
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+        --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        overflow-x: clip;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--color-paper);
+        color: var(--color-ink);
+        font-family: var(--font-body);
+        font-size: var(--text-base);
+        line-height: 1.65;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      a {
+        color: inherit;
+        text-decoration-color: var(--color-rule-strong);
+        text-underline-offset: 0.22em;
+      }
+
+      a:hover {
+        text-decoration-color: var(--color-accent);
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--color-focus);
+        outline-offset: 3px;
+      }
+
+      .masthead {
+        width: min(100% - 2rem, 78rem);
+        margin-inline: auto;
+        padding-top: var(--space-lg);
+        text-align: center;
+      }
+
+      .masthead__issue {
+        margin: 0 0 var(--space-xs);
+        color: var(--color-muted);
+        font-family: var(--font-data);
+        font-size: var(--text-xs);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.08em;
+      }
+
+      .masthead__name {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.9rem, 5vw, 3.7rem);
+        font-style: normal;
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.04;
+        overflow-wrap: anywhere;
+      }
+
+      .masthead__nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-xs) var(--space-lg);
+        margin-top: var(--space-md);
+      }
+
+      .masthead__nav a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        font-size: var(--text-sm);
+        white-space: nowrap;
+      }
+
+      .masthead__rule {
+        height: 4px;
+        margin: var(--space-sm) 0 0;
+        border: 0;
+        border-top: var(--rule-hair) solid var(--color-rule-strong);
+        border-bottom: var(--rule-hair) solid var(--color-rule-strong);
+      }
+
+      main {
+        width: min(100% - 2rem, 78rem);
+        margin-inline: auto;
+      }
+
+      .intro {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(17rem, 0.7fr);
+        gap: var(--space-3xl);
+        align-items: end;
+        padding: var(--space-4xl) 0 var(--space-3xl);
+      }
+
+      .intro h1 {
+        max-width: 11ch;
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: var(--text-display);
+        font-style: normal;
+        font-weight: 700;
+        letter-spacing: -0.045em;
+        line-height: 1.08;
+        overflow-wrap: anywhere;
+      }
+
+      .intro__lede {
+        max-width: 45ch;
+        margin: 0;
+        color: var(--color-ink-soft);
+        font-size: var(--text-md);
+      }
+
+      .summary-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: var(--rule-hair) solid var(--color-rule-strong);
+        border-bottom: var(--rule-hair) solid var(--color-rule-strong);
+      }
+
+      .summary-strip__item {
+        padding: var(--space-lg) var(--space-md);
+      }
+
+      .summary-strip__item + .summary-strip__item {
+        border-left: var(--rule-hair) solid var(--color-rule);
+      }
+
+      .summary-strip strong {
+        display: block;
+        font-family: var(--font-display);
+        font-size: var(--text-xl);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.1;
+      }
+
+      .summary-strip span {
+        display: block;
+        margin-top: var(--space-xs);
+        color: var(--color-muted);
+        font-size: var(--text-sm);
+      }
+
+      .verdict {
+        max-width: 68ch;
+        margin: var(--space-3xl) auto;
+        padding-left: var(--space-lg);
+        border-left: 3px solid var(--color-accent);
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        line-height: 1.5;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-sm);
+        margin: var(--space-3xl) 0 var(--space-xl);
+      }
+
+      .controls__label {
+        margin-right: var(--space-xs);
+        color: var(--color-muted);
+        font-size: var(--text-sm);
+      }
+
+      .filter-button {
+        min-height: 44px;
+        padding: 0 var(--space-md);
+        border: var(--rule-hair) solid var(--color-rule-strong);
+        border-radius: var(--radius-pill);
+        background: var(--color-paper-raised);
+        cursor: pointer;
+        white-space: nowrap;
+        transition:
+          transform var(--dur-micro) var(--ease-out),
+          background-color var(--dur-micro) var(--ease-out),
+          color var(--dur-micro) var(--ease-out);
+      }
+
+      .filter-button[aria-pressed="true"] {
+        border-color: var(--color-ink);
+        background: var(--color-ink);
+        color: var(--color-paper);
+      }
+
+      .filter-button:active {
+        transform: translateY(1px);
+      }
+
+      .filter-button:disabled,
+      .filter-button[aria-disabled="true"] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .filter-button[data-state="loading"] {
+        cursor: wait;
+      }
+
+      .filter-button[data-state="error"] {
+        border-style: double;
+        border-color: var(--color-severity);
+      }
+
+      .filter-button[data-state="success"] {
+        border-style: double;
+        border-color: var(--color-compatible);
+      }
+
+      .section-heading {
+        max-width: 65ch;
+        margin: var(--space-4xl) 0 var(--space-xl);
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: var(--text-2xl);
+        font-style: normal;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+      }
+
+      .section-heading p {
+        margin: var(--space-sm) 0 0;
+        color: var(--color-muted);
+      }
+
+      .conflict-list {
+        border-top: var(--rule-hair) solid var(--color-rule-strong);
+      }
+
+      .conflict {
+        display: grid;
+        grid-template-columns: minmax(10rem, 0.32fr) minmax(0, 1fr);
+        gap: var(--space-2xl);
+        padding: var(--space-2xl) 0;
+        border-bottom: var(--rule-hair) solid var(--color-rule);
+      }
+
+      .conflict[hidden] {
+        display: none;
+      }
+
+      .conflict__meta {
+        align-self: start;
+        position: sticky;
+        top: var(--space-lg);
+      }
+
+      .severity {
+        display: inline-flex;
+        min-height: 28px;
+        align-items: center;
+        padding-inline: var(--space-sm);
+        border-radius: var(--radius-pill);
+        font-family: var(--font-data);
+        font-size: var(--text-xs);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .severity--direct {
+        background: var(--color-severity-soft);
+        color: var(--color-severity);
+      }
+
+      .severity--choice {
+        background: var(--color-choice-soft);
+        color: var(--color-choice);
+      }
+
+      .severity--compatible {
+        background: var(--color-compatible-soft);
+        color: var(--color-compatible);
+      }
+
+      .conflict__number {
+        display: block;
+        margin-top: var(--space-lg);
+        color: var(--color-muted);
+        font-family: var(--font-data);
+        font-size: var(--text-sm);
+      }
+
+      .conflict__body h3 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: var(--text-xl);
+        font-style: normal;
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+      }
+
+      .conflict__summary {
+        max-width: 65ch;
+        margin: var(--space-sm) 0 var(--space-lg);
+        color: var(--color-ink-soft);
+      }
+
+      .comparison {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-lg);
+      }
+
+      .side {
+        min-width: 0;
+        padding-top: var(--space-md);
+        border-top: 2px solid var(--color-rule-strong);
+      }
+
+      .side--existing {
+        border-top-color: var(--old-deep-sage);
+      }
+
+      .side--new {
+        border-top-color: var(--new-primary);
+      }
+
+      .side__label {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-sm);
+        align-items: baseline;
+        margin-bottom: var(--space-xs);
+        font-family: var(--font-data);
+        font-size: var(--text-xs);
+      }
+
+      .side__label strong {
+        font-size: var(--text-sm);
+      }
+
+      .source-ref {
+        color: var(--color-muted);
+        font-size: var(--text-xs);
+        overflow-wrap: anywhere;
+      }
+
+      .side p {
+        margin: 0;
+      }
+
+      .decision {
+        max-width: 65ch;
+        margin: var(--space-lg) 0 0;
+        padding: var(--space-md) var(--space-lg);
+        background: var(--color-paper-raised);
+        border-left: 2px solid var(--color-ink);
+      }
+
+      .decision strong {
+        font-family: var(--font-display);
+      }
+
+      .sample {
+        margin-top: var(--space-xl);
+      }
+
+      .sample__caption {
+        margin-bottom: var(--space-sm);
+        color: var(--color-muted);
+        font-size: var(--text-sm);
+      }
+
+      .sample-pair {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-md);
+      }
+
+      .phone-stage {
+        position: relative;
+        min-height: 28rem;
+        overflow: clip;
+        border: var(--rule-hair) solid var(--color-rule-strong);
+        background: var(--old-hanji);
+      }
+
+      .phone-stage__tag {
+        position: absolute;
+        z-index: 8;
+        top: var(--space-sm);
+        left: var(--space-sm);
+        padding: var(--space-2xs) var(--space-xs);
+        background: var(--color-overlay);
+        color: var(--color-paper);
+        font-family: var(--font-data);
+        font-size: var(--text-xs);
+      }
+
+      .door {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        background: var(--old-dark-wood);
+      }
+
+      .door__panel {
+        position: relative;
+        margin: var(--space-xs) 0;
+        border: 8px solid var(--old-wood);
+        background: var(--old-hanji);
+      }
+
+      .door__panel:first-child {
+        margin-left: var(--space-xs);
+        border-right-width: 4px;
+      }
+
+      .door__panel:last-child {
+        margin-right: var(--space-xs);
+        border-left-width: 4px;
+      }
+
+      .lattice {
+        position: absolute;
+        inset: var(--space-sm);
+        opacity: 0.96;
+        background:
+          linear-gradient(var(--old-wood), var(--old-wood)) 0 20% / 100% 4px no-repeat,
+          linear-gradient(var(--old-wood), var(--old-wood)) 0 50% / 100% 4px no-repeat,
+          linear-gradient(var(--old-wood), var(--old-wood)) 0 80% / 100% 4px no-repeat,
+          linear-gradient(90deg, var(--old-wood), var(--old-wood)) 25% 0 / 4px 100% no-repeat,
+          linear-gradient(90deg, var(--old-wood), var(--old-wood)) 50% 0 / 4px 100% no-repeat,
+          linear-gradient(90deg, var(--old-wood), var(--old-wood)) 75% 0 / 4px 100% no-repeat;
+      }
+
+      .lattice::before,
+      .lattice::after {
+        position: absolute;
+        width: 42%;
+        height: 25%;
+        border: 4px solid var(--old-wood);
+        content: "";
+      }
+
+      .lattice::before {
+        top: 29%;
+        left: 8%;
+        border-right: 0;
+      }
+
+      .lattice::after {
+        right: 8%;
+        bottom: 21%;
+        border-left: 0;
+      }
+
+      .invitation-card {
+        position: absolute;
+        z-index: 4;
+        top: 50%;
+        left: 50%;
+        width: min(72%, 14rem);
+        padding: var(--space-lg) var(--space-md);
+        border: var(--rule-hair) solid color-mix(in oklch, var(--old-wine), transparent 55%);
+        background: color-mix(in oklch, var(--old-ivory), transparent 8%);
+        text-align: center;
+        transform: translate(-50%, -50%);
+      }
+
+      .invitation-card__seal {
+        position: relative;
+        width: 4rem;
+        aspect-ratio: 624 / 669;
+        overflow: hidden;
+        margin: 0 auto var(--space-sm);
+      }
+
+      .invitation-card__seal img {
+        position: absolute;
+        top: -21.67%;
+        left: -73.72%;
+        width: 246.15%;
+        max-width: none;
+      }
+
+      .invitation-card strong {
+        display: block;
+        font-family: var(--font-display);
+        font-size: var(--text-md);
+      }
+
+      .knot {
+        position: absolute;
+        z-index: 5;
+        left: 50%;
+        bottom: 12%;
+        width: 2.8rem;
+        height: 2.8rem;
+        transform: translateX(-50%);
+      }
+
+      .knot::before,
+      .knot::after {
+        position: absolute;
+        inset: 0;
+        border: 5px solid var(--old-knot-red);
+        border-radius: 50% 50% 45% 55%;
+        content: "";
+        transform: rotate(45deg) scaleX(0.55);
+      }
+
+      .knot::after {
+        border-color: var(--old-knot-blue);
+        transform: rotate(-45deg) scaleX(0.55);
+      }
+
+      .seal-stage {
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 22% 18%, var(--new-surface), transparent 34%),
+          var(--new-paper);
+      }
+
+      .seal-stage__content {
+        width: min(78%, 18rem);
+        text-align: center;
+      }
+
+      .main-seal {
+        width: 8.5rem;
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        margin: 0 auto var(--space-xl);
+        border: 7px double var(--new-red);
+        border-radius: 50%;
+        color: var(--new-red);
+        font-family: var(--font-display);
+        font-size: var(--text-md);
+        font-weight: 700;
+        line-height: 1.35;
+        transform: rotate(-2deg);
+      }
+
+      .seal-stage h4 {
+        margin: 0;
+        color: var(--new-ink);
+        font-family: var(--font-display);
+        font-size: var(--text-xl);
+        font-style: normal;
+      }
+
+      .seal-stage p {
+        margin: var(--space-sm) 0 0;
+        color: var(--new-muted);
+      }
+
+      .palette-block {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        min-height: 8.5rem;
+        border: var(--rule-hair) solid var(--color-rule);
+      }
+
+      .swatch {
+        display: flex;
+        align-items: end;
+        min-width: 0;
+        padding: var(--space-xs);
+        font-family: var(--font-data);
+        font-size: 0.625rem;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+
+      .swatch--old-1 { background: var(--old-ivory); color: var(--old-ink); }
+      .swatch--old-2 { background: var(--old-paper); color: var(--old-ink); }
+      .swatch--old-3 { background: var(--old-deep-sage); color: var(--old-ivory); }
+      .swatch--old-4 { background: var(--old-wine); color: var(--old-ivory); }
+      .swatch--old-5 { background: var(--old-wood); color: var(--old-ivory); }
+      .swatch--old-6 { background: var(--old-knot-blue); color: var(--old-ivory); }
+      .swatch--new-1 { background: var(--new-paper); color: var(--new-ink); }
+      .swatch--new-2 { background: var(--new-surface); color: var(--new-ink); }
+      .swatch--new-3 { background: var(--new-primary); color: var(--new-surface); }
+      .swatch--new-4 { background: var(--new-red); color: var(--new-surface); }
+      .swatch--new-5 { background: var(--new-green); color: var(--new-surface); }
+      .swatch--new-6 { background: var(--new-gold); color: var(--new-ink); }
+
+      .ratio-bar {
+        display: flex;
+        height: 2.5rem;
+        margin-top: var(--space-xs);
+        overflow: clip;
+        border: var(--rule-hair) solid var(--color-rule);
+      }
+
+      .ratio-bar span {
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        font-family: var(--font-data);
+        font-size: 0.625rem;
+      }
+
+      .ratio-old-paper { width: 45%; background: var(--old-ivory); color: var(--old-ink); }
+      .ratio-old-dark { width: 35%; background: var(--old-deep-sage); color: var(--old-ivory); }
+      .ratio-old-wood { width: 15%; background: var(--old-wood); color: var(--old-ivory); }
+      .ratio-old-accent { width: 5%; background: var(--old-wine); color: transparent; }
+      .ratio-new-paper { width: 60%; background: var(--new-paper); color: var(--new-ink); }
+      .ratio-new-media { width: 25%; background: var(--new-muted); color: var(--new-surface); }
+      .ratio-new-primary { width: 10%; background: var(--new-primary); color: transparent; }
+      .ratio-new-accent { width: 5%; background: var(--new-red); color: transparent; }
+
+      .flow {
+        display: flex;
+        align-items: stretch;
+        gap: var(--space-xs);
+        padding: var(--space-md);
+        border: var(--rule-hair) solid var(--color-rule);
+        background: var(--color-paper-raised);
+      }
+
+      .flow__step {
+        flex: 1;
+        min-width: 0;
+        display: grid;
+        place-items: center;
+        min-height: 5.5rem;
+        padding: var(--space-xs);
+        border: var(--rule-hair) solid var(--color-rule-strong);
+        text-align: center;
+        font-size: var(--text-xs);
+        line-height: 1.35;
+      }
+
+      .flow__step--horizontal {
+        background: var(--old-deep-sage);
+        color: var(--old-ivory);
+      }
+
+      .flow__step--video {
+        background: var(--new-primary);
+        color: var(--new-surface);
+      }
+
+      .flow__arrow {
+        display: grid;
+        place-items: center;
+        color: var(--color-muted);
+      }
+
+      .responsive-demo {
+        display: grid;
+        min-height: 18rem;
+        place-items: center;
+        padding: var(--space-lg);
+        border: var(--rule-hair) solid var(--color-rule);
+        background: var(--color-ink);
+      }
+
+      .responsive-demo--wide {
+        background: var(--new-paper);
+      }
+
+      .mobile-shell {
+        width: min(100%, 10.5rem);
+        height: 15rem;
+        display: grid;
+        align-content: center;
+        padding: var(--space-md);
+        background: var(--old-ivory);
+        color: var(--old-ink);
+        box-shadow: 0 0 2.5rem var(--color-overlay);
+        text-align: center;
+      }
+
+      .wide-shell {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        border-top: var(--rule-hair) solid var(--new-primary);
+        border-bottom: var(--rule-hair) solid var(--new-primary);
+      }
+
+      .wide-shell__visual {
+        min-height: 13rem;
+        background:
+          linear-gradient(var(--color-overlay), var(--color-overlay)),
+          var(--new-green);
+      }
+
+      .wide-shell__copy {
+        display: grid;
+        align-content: center;
+        padding: var(--space-lg);
+        color: var(--new-ink);
+      }
+
+      .wide-shell h4,
+      .mobile-shell h4 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: var(--text-md);
+        font-style: normal;
+      }
+
+      .wide-shell p,
+      .mobile-shell p {
+        margin: var(--space-xs) 0 0;
+        font-size: var(--text-xs);
+      }
+
+      .component-demo {
+        display: grid;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border: var(--rule-hair) solid var(--color-rule);
+        background: var(--color-paper-raised);
+      }
+
+      .photo-card-old,
+      .photo-card-new {
+        min-height: 8rem;
+        display: grid;
+        place-items: end start;
+        padding: var(--space-md);
+      }
+
+      .photo-card-old {
+        border-radius: 0;
+        background: var(--old-deep-sage);
+        color: var(--old-ivory);
+        box-shadow: 0 1.6rem 2.8rem color-mix(in oklch, var(--old-ink), transparent 74%);
+      }
+
+      .photo-card-new {
+        border-radius: 1rem;
+        background: var(--new-primary);
+        color: var(--new-surface);
+        box-shadow: 0 1px 2px color-mix(in oklch, var(--new-ink), transparent 90%);
+      }
+
+      .button-demo-old,
+      .button-demo-new {
+        width: max-content;
+        min-width: 9rem;
+        display: inline-grid;
+        place-items: center;
+        padding-inline: var(--space-md);
+        border: var(--rule-hair) solid currentcolor;
+        white-space: nowrap;
+      }
+
+      .button-demo-old {
+        min-height: 44px;
+        border-radius: var(--radius-pill);
+        background: transparent;
+      }
+
+      .button-demo-new {
+        min-height: 48px;
+        border-radius: var(--radius-md);
+        background: var(--new-primary);
+        color: var(--new-surface);
+      }
+
+      .compatibility-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-lg) var(--space-2xl);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .compatibility-list li {
+        padding-top: var(--space-md);
+        border-top: 2px solid var(--color-compatible);
+      }
+
+      .compatibility-list strong {
+        display: block;
+        margin-bottom: var(--space-xs);
+        font-family: var(--font-display);
+        font-size: var(--text-md);
+      }
+
+      .decision-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: var(--text-sm);
+      }
+
+      .decision-table th,
+      .decision-table td {
+        padding: var(--space-md);
+        border-bottom: var(--rule-hair) solid var(--color-rule);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .decision-table th {
+        color: var(--color-muted);
+        font-family: var(--font-data);
+        font-size: var(--text-xs);
+        letter-spacing: 0.04em;
+      }
+
+      .decision-table td:first-child {
+        width: 24%;
+        font-weight: 700;
+      }
+
+      .recommendation {
+        color: var(--color-compatible);
+        font-weight: 700;
+      }
+
+      .foot-mast {
+        width: min(100% - 2rem, 78rem);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: var(--space-lg);
+        margin: var(--space-4xl) auto 0;
+        padding: var(--space-xl) 0 var(--space-2xl);
+        border-top: 4px double var(--color-rule-strong);
+      }
+
+      .foot-mast__name {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        font-weight: 700;
+      }
+
+      .foot-mast p {
+        margin: 0;
+      }
+
+      .foot-mast__meta {
+        color: var(--color-muted);
+        font-family: var(--font-data);
+        font-size: var(--text-xs);
+        text-align: right;
+      }
+
+      @media (hover: hover) {
+        .filter-button:hover {
+          transform: translateY(-1px);
+        }
+      }
+
+      @media (max-width: 60rem) {
+        .intro {
+          grid-template-columns: minmax(0, 1fr);
+          gap: var(--space-xl);
+        }
+
+        .intro__lede {
+          max-width: 65ch;
+        }
+
+        .conflict {
+          grid-template-columns: minmax(0, 1fr);
+          gap: var(--space-lg);
+        }
+
+        .conflict__meta {
+          position: static;
+          display: flex;
+          align-items: center;
+          gap: var(--space-md);
+        }
+
+        .conflict__number {
+          margin-top: 0;
+        }
+      }
+
+      @media (max-width: 48rem) {
+        .summary-strip,
+        .comparison,
+        .sample-pair,
+        .compatibility-list {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .summary-strip__item + .summary-strip__item {
+          border-top: var(--rule-hair) solid var(--color-rule);
+          border-left: 0;
+        }
+
+        .phone-stage {
+          min-height: 31rem;
+        }
+
+        .decision-table,
+        .decision-table tbody,
+        .decision-table tr,
+        .decision-table td {
+          display: block;
+        }
+
+        .decision-table thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: clip;
+          clip-path: inset(50%);
+        }
+
+        .decision-table tr {
+          padding: var(--space-md) 0;
+          border-bottom: var(--rule-hair) solid var(--color-rule);
+        }
+
+        .decision-table td,
+        .decision-table td:first-child {
+          width: auto;
+          padding: var(--space-xs) 0;
+          border: 0;
+        }
+
+        .decision-table td::before {
+          display: block;
+          margin-bottom: var(--space-2xs);
+          color: var(--color-muted);
+          font-family: var(--font-data);
+          font-size: var(--text-xs);
+          content: attr(data-label);
+        }
+
+        .foot-mast {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .foot-mast__meta {
+          text-align: left;
+        }
+      }
+
+      @media (max-width: 30rem) {
+        main,
+        .masthead,
+        .foot-mast {
+          width: min(100% - 1.5rem, 78rem);
+        }
+
+        .masthead__nav {
+          gap: var(--space-xs) var(--space-md);
+        }
+
+        .intro {
+          padding-top: var(--space-3xl);
+        }
+
+        .intro h1 {
+          font-size: clamp(2.25rem, 12vw, 3.3rem);
+        }
+
+        .palette-block {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .flow {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .flow__arrow {
+          transform: rotate(90deg);
+        }
+
+        .wide-shell {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .wide-shell__visual {
+          min-height: 7rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 150ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 150ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="masthead">
+      <p class="masthead__issue">DESIGN REVIEW · 2026-07-31 · SOURCE v18</p>
+      <p class="masthead__name">전통혼례 청첩장 설계 충돌 보고서</p>
+      <nav class="masthead__nav" aria-label="문서 내 이동">
+        <a href="#summary">요약</a>
+        <a href="#conflicts">직접 충돌</a>
+        <a href="#compatible">통합 가능</a>
+        <a href="#decision">결정표</a>
+      </nav>
+      <hr class="masthead__rule" />
+    </header>
+
+    <main>
+      <section class="intro" id="summary">
+        <h1>같은 이야기, 다른 청첩장</h1>
+        <p class="intro__lede">
+          기존 가이드는 “한옥 문을 여는 모바일 경험”을 정의하고, 새 가이드는 “한지 위 인장과 영상으로 이어지는 현대적 청첩장”을 정의합니다. 아래 비교는 원래의 충돌을 보존하며, 2026-07-31 확정 기준을 각 항목에 함께 표시합니다.
+        </p>
+      </section>
+
+      <section class="summary-strip" aria-label="충돌 요약">
+        <div class="summary-strip__item">
+          <strong>7</strong>
+          <span>동시에 채택할 수 없는 직접 충돌</span>
+        </div>
+        <div class="summary-strip__item">
+          <strong>2</strong>
+          <span>규칙을 정하면 병합 가능한 선택 충돌</span>
+        </div>
+        <div class="summary-strip__item">
+          <strong>4</strong>
+          <span>그대로 흡수해도 되는 보완 항목</span>
+        </div>
+      </section>
+
+      <p class="verdict">
+        <strong>적용 완료:</strong> 완자살 문과 수평 타임라인·480px 모바일 프레임을 유지합니다. 중앙 카드에는 선택한 상호·스테프 인장 PNG를 사용하고, 전역은 새 팔레트, 창호문은 기존 재질 팔레트, 타임라인은 테라코타를 사용합니다. 문 뒤 오프닝은 현재 이미지이며 향후 복수 영상으로 교체합니다.
+      </p>
+
+      <div class="controls" aria-label="충돌 항목 필터">
+        <span class="controls__label">표시 범위</span>
+        <button class="filter-button" type="button" data-filter="all" aria-pressed="true">전체 9개</button>
+        <button class="filter-button" type="button" data-filter="direct" aria-pressed="false">직접 충돌 7개</button>
+        <button class="filter-button" type="button" data-filter="choice" aria-pressed="false">선택 충돌 2개</button>
+      </div>
+
+      <section id="conflicts" aria-labelledby="conflicts-title">
+        <div class="section-heading">
+          <h2 id="conflicts-title">충돌 지점과 실제 화면 차이</h2>
+          <p>“기존”은 `03-design-system.md`와 v18 기획·개발 문서, “새 가이드”는 `korean-traditional-wedding-invitation-design-guide.md`를 뜻합니다.</p>
+        </div>
+
+        <div class="conflict-list">
+          <article class="conflict" data-severity="direct">
+            <div class="conflict__meta">
+              <span class="severity severity--direct">직접 충돌</span>
+              <span class="conflict__number">01 / HERO</span>
+            </div>
+            <div class="conflict__body">
+              <h3>첫 장면의 주인공: 완자살 문인가, 인장인가</h3>
+              <p class="conflict__summary">첫 화면은 사이트의 정체성이므로 두 안을 동시에 주인공으로 둘 수 없습니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">01-project-brief.md:7 · 03:75–102</span></div>
+                  <p>닫힌 두 짝 창호문에서 완자살이 외곽부터 그려지고, 스크롤하면 문이 열립니다. 문 자체가 표지이자 로딩 장면입니다.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:327–376 · Sequence 00</span></div>
+                  <p>한지 위 원형 또는 라운드 스퀘어 인장이 1.2–1.8초 동안 찍히며 시작합니다. Hero의 대표 전통 요소는 인장입니다.</p>
+                </div>
+              </div>
+              <div class="sample">
+                <p class="sample__caption">시각 샘플 — 첫 접속 시 사용자가 받는 인상</p>
+                <div class="sample-pair">
+                  <div class="phone-stage">
+                    <span class="phone-stage__tag">A · EXISTING</span>
+                    <div class="door" aria-hidden="true">
+                      <div class="door__panel"><span class="lattice"></span></div>
+                      <div class="door__panel"><span class="lattice"></span></div>
+                    </div>
+                    <div class="invitation-card">
+                      <div class="invitation-card__seal" aria-hidden="true">
+                        <img src="../public/wedding/seals/sangho-steph-square-tassel.png" alt="" />
+                      </div>
+                      <strong>상호 · 스테프</strong>
+                      <span>2026년 11월 1일</span>
+                    </div>
+                    <span class="knot" aria-hidden="true"></span>
+                  </div>
+                  <div class="phone-stage seal-stage">
+                    <span class="phone-stage__tag">B · NEW</span>
+                    <div class="seal-stage__content">
+                      <div class="main-seal">상호<br />&amp;<br />스테프</div>
+                      <h4>우리의 이야기에 초대합니다</h4>
+                      <p>2026.11.01</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> 완자살 창호문과 중앙 카드를 유지하고, 카드의 글자형 `혼례` 인장을 `sangho-steph-square-tassel.png`로 교체합니다.</p>
+            </div>
+          </article>
+
+          <article class="conflict" data-severity="direct">
+            <div class="conflict__meta">
+              <span class="severity severity--direct">직접 충돌</span>
+              <span class="conflict__number">02 / ORNAMENT</span>
+            </div>
+            <div class="conflict__body">
+              <h3>한 화면의 전통 요소 밀도</h3>
+              <p class="conflict__summary">기존 첫 화면은 창호·완자살·매듭·한지 카드·인장·나무 그림자를 한 장면에 결합하지만, 새 가이드는 한 화면에 전통 요소를 하나만 두라고 명시합니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">02-storyboard.md:13–43</span></div>
+                  <p>여러 전통 요소를 “장식”이 아니라 하나의 실제 문과 재료 체계로 묶습니다. 물성의 일관성이 목표입니다.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:59–79</span></div>
+                  <p>Hero=인장, 전환=구름, 혼례 정보=창호 선, 엔딩=매듭처럼 한 화면마다 하나씩 분리합니다.</p>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> 기존 방식대로 창호·완자살·매듭·한지 카드·나무 그림자를 하나의 물리적 문 세트로 유지합니다.</p>
+            </div>
+          </article>
+
+          <article class="conflict" data-severity="direct">
+            <div class="conflict__meta">
+              <span class="severity severity--direct">직접 충돌</span>
+              <span class="conflict__number">03 / COLOR</span>
+            </div>
+            <div class="conflict__body">
+              <h3>주조색: 딥 세이지와 목재인가, 테라코타인가</h3>
+              <p class="conflict__summary">두 문서는 배경색뿐 아니라 큰 면적을 차지할 색과 포인트의 역할을 다르게 정의합니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">03-design-system.md:18–41</span></div>
+                  <p>한지 45%, 먹색·짙은 녹색 35%, 나무 15%. 딥 세이지 타임라인과 목재 문이 큰 장면을 담당합니다.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:83–166</span></div>
+                  <p>한지 60%, 사진·영상 25%, 테라코타·갈색 10%. `#A26249`가 제목·날짜·버튼의 주색입니다. 녹색은 제한적 보조색입니다.</p>
+                </div>
+              </div>
+              <div class="sample">
+                <p class="sample__caption">시각 샘플 — 실제 지정색과 면적 비율</p>
+                <div class="sample-pair">
+                  <div>
+                    <div class="palette-block" aria-label="기존 팔레트">
+                      <span class="swatch swatch--old-1">#F3EFE6</span><span class="swatch swatch--old-2">#E8E0D2</span><span class="swatch swatch--old-3">#414A40</span><span class="swatch swatch--old-4">#804A45</span><span class="swatch swatch--old-5">#482817</span><span class="swatch swatch--old-6">#274F70</span>
+                    </div>
+                    <div class="ratio-bar" aria-label="기존 색상 비율"><span class="ratio-old-paper">45%</span><span class="ratio-old-dark">35%</span><span class="ratio-old-wood">15%</span><span class="ratio-old-accent">5%</span></div>
+                  </div>
+                  <div>
+                    <div class="palette-block" aria-label="새 팔레트">
+                      <span class="swatch swatch--new-1">#F8F4ED</span><span class="swatch swatch--new-2">#FFFAF4</span><span class="swatch swatch--new-3">#A26249</span><span class="swatch swatch--new-4">#9E2F2F</span><span class="swatch swatch--new-5">#486451</span><span class="swatch swatch--new-6">#B49A62</span>
+                    </div>
+                    <div class="ratio-bar" aria-label="새 색상 비율"><span class="ratio-new-paper">60%</span><span class="ratio-new-media">25%</span><span class="ratio-new-primary">10%</span><span class="ratio-new-accent">5%</span></div>
+                  </div>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> 전역 브랜드 컬러는 새 팔레트를 사용하고, 창호문만 기존 목재·창호지·매듭 팔레트를 유지합니다. 딥 세이지 타임라인은 테라코타 계열로 변경합니다.</p>
+            </div>
+          </article>
+
+          <article class="conflict" data-severity="choice">
+            <div class="conflict__meta">
+              <span class="severity severity--choice">선택 충돌</span>
+              <span class="conflict__number">04 / PAPER</span>
+            </div>
+            <div class="conflict__body">
+              <h3>한지 질감의 범위와 강도</h3>
+              <p class="conflict__summary">한지 자체는 공통 방향이지만 새 가이드의 전 페이지 노이즈 방식은 기존의 “먼지처럼 보이는 효과 금지”와 쉽게 충돌합니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">03-design-system.md:15 · 104–111</span></div>
+                  <p>창호지에 5–7px 간격의 아주 작은 불규칙 패턴만 사용하고, 노이즈·먼지·얼룩처럼 보이지 않게 제한합니다.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:170–239</span></div>
+                  <p>전체 페이지에 0.15–0.22 강도의 한지 텍스처를 유지하고 `paperNoise` 필터와 multiply 혼합 예시를 제시합니다.</p>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> 기존의 은은한 한지 질감과 구현 강도를 유지합니다.</p>
+            </div>
+          </article>
+
+          <article class="conflict" data-severity="direct">
+            <div class="conflict__meta">
+              <span class="severity severity--direct">직접 충돌</span>
+              <span class="conflict__number">05 / STORY FLOW</span>
+            </div>
+            <div class="conflict__body">
+              <h3>서사의 기억점: 수평 타임라인인가, 영상 시퀀스인가</h3>
+              <p class="conflict__summary">기존은 세로 입력이 가로 이동으로 바뀌는 순간을 핵심 경험으로 정의하지만 새 가이드의 16개 시퀀스에는 이 구간이 없습니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">01-project-brief.md:13–15 · 31–55</span></div>
+                  <p>완자살 문 → 사진 3장 → 세로 스크롤 기반 수평 가족 타임라인 → 세로 정보 흐름.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:393–899</span></div>
+                  <p>인장 → 밴쿠버 → 사진 겹침 → 캐나다 결혼 → 가족 → 한국 이동 → 혼례장 영상 → 일반 정보.</p>
+                </div>
+              </div>
+              <div class="sample">
+                <p class="sample__caption">시각 샘플 — 같은 세로 스크롤이 만드는 서로 다른 리듬</p>
+                <div class="sample-pair">
+                  <div class="flow" aria-label="기존 경험 흐름"><span class="flow__step">문 열림</span><span class="flow__arrow">→</span><span class="flow__step flow__step--horizontal">가로 타임라인</span><span class="flow__arrow">→</span><span class="flow__step">정보</span></div>
+                  <div class="flow" aria-label="새 경험 흐름"><span class="flow__step">인장</span><span class="flow__arrow">→</span><span class="flow__step flow__step--video">영상 스크럽</span><span class="flow__arrow">→</span><span class="flow__step">정보</span></div>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> 기존 수평 타임라인과 전체 서사 흐름을 유지합니다. 타임라인 세부 내용은 후속 논의에서 더 정교하게 다듬습니다.</p>
+            </div>
+          </article>
+
+          <article class="conflict" data-severity="direct">
+            <div class="conflict__meta">
+              <span class="severity severity--direct">직접 충돌</span>
+              <span class="conflict__number">06 / MOTION STACK</span>
+            </div>
+            <div class="conflict__body">
+              <h3>사진 기반 웹 모션인가, GSAP 기반 영상 스크러빙인가</h3>
+              <p class="conflict__summary">이는 미감 차이가 아니라 자산·성능·개발 구조가 모두 달라지는 기술 선택입니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">01-project-brief.md:13 · 06-handoff.md:13</span></div>
+                  <p>영상 파일 없이 사진과 SVG, 브라우저 기본 API, `requestAnimationFrame`으로 영화 같은 흐름을 만듭니다.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:952–999 · 1284–1305</span></div>
+                  <p>GSAP·ScrollTrigger·MP4/WebM을 필수로 두고 `video.currentTime`을 스크롤에 연결합니다. 실패 시 Canvas Image Sequence로 전환합니다.</p>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> 문 뒤 오프닝은 최종적으로 여러 개의 짧은 영상을 이어 사용합니다. 현재는 장면별 이미지로 구조를 표시하며 재생·스크롤 연동 방식은 영상 준비 후 확정합니다.</p>
+            </div>
+          </article>
+
+          <article class="conflict" data-severity="direct">
+            <div class="conflict__meta">
+              <span class="severity severity--direct">직접 충돌</span>
+              <span class="conflict__number">07 / RESPONSIVE</span>
+            </div>
+            <div class="conflict__body">
+              <h3>데스크톱에서도 모바일 청첩장인가, 넓은 웹페이지인가</h3>
+              <p class="conflict__summary">480px 고정 프레임과 1120px 분할 레이아웃은 같은 데스크톱 규칙으로 사용할 수 없습니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">03-design-system.md:170–180</span></div>
+                  <p>콘텐츠는 최대 480px. 넓은 화면에서도 가운데 정렬하고 바깥을 짙은 배경으로 남깁니다.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:1156–1182</span></div>
+                  <p>데스크톱 콘텐츠 최대 1120px. 스토리 사진과 문구를 좌우로 분할할 수 있습니다.</p>
+                </div>
+              </div>
+              <div class="sample">
+                <p class="sample__caption">시각 샘플 — 같은 데스크톱 폭에서의 차이</p>
+                <div class="sample-pair">
+                  <div class="responsive-demo"><div class="mobile-shell"><h4>480px 모바일 프레임</h4><p>바깥은 짙은 여백</p></div></div>
+                  <div class="responsive-demo responsive-demo--wide"><div class="wide-shell"><div class="wide-shell__visual" aria-hidden="true"></div><div class="wide-shell__copy"><h4>1120px 분할 구성</h4><p>사진과 문구를 좌우 배치</p></div></div></div>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> 데스크톱에서도 최대 480px 모바일 프레임을 중앙 정렬합니다.</p>
+            </div>
+          </article>
+
+          <article class="conflict" data-severity="choice">
+            <div class="conflict__meta">
+              <span class="severity severity--choice">선택 충돌</span>
+              <span class="conflict__number">08 / COMPONENTS</span>
+            </div>
+            <div class="conflict__body">
+              <h3>직선형 사진과 캡슐 버튼 vs 범용 라운드 토큰</h3>
+              <p class="conflict__summary">새 가이드의 radius 토큰은 사용처가 명시되지 않아 그대로 적용하면 기존 사진 프레임 규칙을 깨뜨릴 수 있습니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">03-design-system.md:189–196</span></div>
+                  <p>사진 프레임은 모서리 없이 직선형, 그림자는 깊고 넓게. 버튼만 캡슐형 1px 테두리를 사용합니다.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:1111–1151 · 1169–1175</span></div>
+                  <p>8·16·28px·pill의 범용 radius 토큰을 제시하고 버튼 높이를 48px로 높입니다.</p>
+                </div>
+              </div>
+              <div class="sample">
+                <p class="sample__caption">시각 샘플 — radius 토큰을 사진에 적용했을 때 발생하는 스타일 이동</p>
+                <div class="sample-pair">
+                  <div class="component-demo"><div class="photo-card-old">직선형 사진 프레임</div><span class="button-demo-old">지도 보기 · 44px</span></div>
+                  <div class="component-demo"><div class="photo-card-new">16px 라운드 적용 예</div><span class="button-demo-new">지도 보기 · 48px</span></div>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> 전체 화면 미디어 0px, 타임라인 미디어 8px, 정보·RSVP 카드 16px, modal 28px, 버튼 pill을 사용하고 기능 UI의 최소 높이는 48px로 맞춥니다.</p>
+            </div>
+          </article>
+
+          <article class="conflict" data-severity="direct">
+            <div class="conflict__meta">
+              <span class="severity severity--direct">직접 충돌</span>
+              <span class="conflict__number">09 / MVP</span>
+            </div>
+            <div class="conflict__body">
+              <h3>MVP에서 RSVP가 빠지는가, 포함되는가</h3>
+              <p class="conflict__summary">화면 구조와 작업 우선순위가 달라지는 범위 충돌입니다.</p>
+              <div class="comparison">
+                <div class="side side--existing">
+                  <div class="side__label"><strong>기존</strong><span class="source-ref">01-project-brief.md:77–97</span></div>
+                  <p>현재 샘플에 교통·RSVP 카드가 이미 포함돼 있고, 실제 제출 폼과 저장소 연결이 다음 단계입니다.</p>
+                </div>
+                <div class="side side--new">
+                  <div class="side__label"><strong>새 가이드</strong><span class="source-ref">new:1339–1361</span></div>
+                  <p>첫 MVP에서는 RSVP를 제외하고, 갤러리·전통혼례 Q&amp;A·마음 전하실 곳과 함께 검수 후 추가합니다.</p>
+                </div>
+              </div>
+              <p class="decision"><strong>확정.</strong> RSVP를 현재 흐름에 포함하고, 실제 폼과 저장소 연결은 후속 단계에서 진행합니다.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="compatible" aria-labelledby="compatible-title">
+        <div class="section-heading">
+          <h2 id="compatible-title">충돌하지 않고 흡수할 수 있는 제안</h2>
+          <p>아래 항목은 기존 v18의 핵심 경험을 유지하면서 그대로 보강할 수 있습니다.</p>
+        </div>
+        <ul class="compatibility-list">
+          <li><strong>서체 구체화</strong>기존의 “라이선스가 명확한 명조” 원칙에 MaruBuri·Gowun Batang·Noto Serif KR 후보를 연결할 수 있습니다.</li>
+          <li><strong>터치 영역 48px</strong>기존 최소 44px보다 엄격한 값이므로 모든 기능 버튼과 입력 높이를 48px로 통일할 수 있습니다.</li>
+          <li><strong>실제 사진 우선</strong>실제 얼굴의 AI 재생성 금지, 모바일 크롭, WebP/AVIF, poster와 정적 대체 화면 원칙은 양쪽이 같습니다.</li>
+          <li><strong>접근성과 무음 기본값</strong>Reduced Motion, 명확한 alt·label, 키보드 접근, 자동재생 음악 금지는 서로 일치합니다.</li>
+        </ul>
+      </section>
+
+      <section id="decision" aria-labelledby="decision-title">
+        <div class="section-heading">
+          <h2 id="decision-title">확정 결정표</h2>
+          <p>2026-07-31 결정이 문서와 현재 v18 코드에 반영된 기준입니다.</p>
+        </div>
+        <table class="decision-table">
+          <thead><tr><th>항목</th><th>기존안</th><th>새 가이드안</th><th>확정 기준</th></tr></thead>
+          <tbody>
+            <tr><td data-label="항목">첫 화면</td><td data-label="기존안">완자살 창호문</td><td data-label="새 가이드안">한지 위 인장</td><td data-label="확정 기준" class="recommendation">완자살 + 중앙 카드 지정 인장</td></tr>
+            <tr><td data-label="항목">주조색</td><td data-label="기존안">딥 세이지·목재</td><td data-label="새 가이드안">테라코타</td><td data-label="확정 기준" class="recommendation">새 전역 팔레트, 문 재질 예외, 테라코타 타임라인</td></tr>
+            <tr><td data-label="항목">서사 장치</td><td data-label="기존안">수평 타임라인</td><td data-label="새 가이드안">영상 시퀀스</td><td data-label="확정 기준" class="recommendation">기존 타임라인 유지</td></tr>
+            <tr><td data-label="항목">오프닝 미디어</td><td data-label="기존안">사진 3장</td><td data-label="새 가이드안">영상</td><td data-label="확정 기준" class="recommendation">현재 이미지, 향후 복수 영상</td></tr>
+            <tr><td data-label="항목">데스크톱</td><td data-label="기존안">480px 중앙 프레임</td><td data-label="새 가이드안">1120px 분할</td><td data-label="확정 기준" class="recommendation">모바일 프레임 유지</td></tr>
+            <tr><td data-label="항목">모서리</td><td data-label="기존안">직선형 사진</td><td data-label="새 가이드안">radius 토큰</td><td data-label="확정 기준" class="recommendation">0·8·16·28px·pill 용도별 적용</td></tr>
+            <tr><td data-label="항목">기능 높이</td><td data-label="기존안">최소 44px</td><td data-label="새 가이드안">최소 48px</td><td data-label="확정 기준" class="recommendation">48px 채택</td></tr>
+            <tr><td data-label="항목">RSVP</td><td data-label="기존안">현재 흐름에 포함</td><td data-label="새 가이드안">MVP 후 추가</td><td data-label="확정 기준" class="recommendation">흐름 유지, 저장만 단계화</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="foot-mast">
+      <div><p class="foot-mast__name">Design Guide Conflict Review</p><p>두 가이드의 문장을 합치는 대신, 선택이 필요한 설계 축을 분리했습니다.</p></div>
+      <p class="foot-mast__meta">Decisions applied · 2026-07-31<br />Docs and production UI updated</p>
+    </footer>
+
+    <script>
+      const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
+      const conflicts = Array.from(document.querySelectorAll("[data-severity]"));
+
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const filter = button.dataset.filter;
+          filterButtons.forEach((candidate) => {
+            candidate.setAttribute("aria-pressed", String(candidate === button));
+          });
+          conflicts.forEach((conflict) => {
+            conflict.hidden = filter !== "all" && conflict.dataset.severity !== filter;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

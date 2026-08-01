@@ -3,6 +3,37 @@
 import Image from "next/image";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 
+type StoryMediaScene = {
+  id: string;
+  imageSrc: string;
+  alt: string;
+  futureVideoSrc?: string;
+};
+
+const storyMediaScenes: StoryMediaScene[] = [
+  {
+    id: "vancouver",
+    imageSrc: "/images/vancouver-story.webp",
+    alt: "밴쿠버 바닷가를 함께 걷는 두 사람",
+  },
+  {
+    id: "canada-wedding",
+    imageSrc: "/images/canada-wedding.webp",
+    alt: "캐나다 결혼식에서 손을 맞잡은 두 사람",
+  },
+  {
+    id: "family-three",
+    imageSrc: "/images/family-three.webp",
+    alt: "창가에서 아기를 안고 있는 세 가족",
+  },
+];
+
+const doorSealSrc = "/wedding/seals/sangho-steph-square-tassel.png";
+const criticalAssets = [
+  ...storyMediaScenes.map((scene) => scene.imageSrc),
+  doorSealSrc,
+];
+
 const memories = [
   {
     year: "VANCOUVER",
@@ -338,11 +369,6 @@ export default function Home() {
     let revealTimer = 0;
     let progressTimer = 0;
     const startedAt = performance.now();
-    const criticalAssets = [
-      "/images/vancouver-story.webp",
-      "/images/canada-wedding.webp",
-      "/images/family-three.webp",
-    ];
     document.body.classList.add("invitation-loading");
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
@@ -724,7 +750,18 @@ export default function Home() {
           </div>
 
           <div className="door-invitation" data-door-invitation>
-            <span className="door-seal">혼례</span>
+            <span className="door-seal" aria-hidden="true">
+              <Image
+                src={doorSealSrc}
+                alt=""
+                width={1536}
+                height={1024}
+                priority
+                unoptimized
+                sizes="92px"
+                className="door-seal__image"
+              />
+            </span>
             <p>상호 · 스테프</p>
             <h1>혼례에 초대합니다</h1>
             <small>2026년 11월 1일</small>
@@ -770,39 +807,25 @@ export default function Home() {
 
       <section ref={heroRef} className="hero-scroll" aria-label="가족 이야기 오프닝">
         <div className="hero-sticky">
-          <div className="hero-layer" data-hero-layer>
-            <Image
-              src="/images/vancouver-story.webp"
-              alt=""
-              fill
-              priority
-              unoptimized
-              sizes="100vw"
-              className="hero-image"
-            />
-          </div>
-          <div className="hero-layer" data-hero-layer>
-            <Image
-              src="/images/canada-wedding.webp"
-              alt=""
-              fill
-              priority
-              unoptimized
-              sizes="100vw"
-              className="hero-image"
-            />
-          </div>
-          <div className="hero-layer" data-hero-layer>
-            <Image
-              src="/images/family-three.webp"
-              alt=""
-              fill
-              priority
-              unoptimized
-              sizes="100vw"
-              className="hero-image"
-            />
-          </div>
+          {storyMediaScenes.map((scene, index) => (
+            <div
+              className="hero-layer"
+              data-hero-layer
+              data-media-kind="image"
+              data-story-scene={scene.id}
+              key={scene.id}
+            >
+              <Image
+                src={scene.imageSrc}
+                alt=""
+                fill
+                priority={index === 0}
+                unoptimized
+                sizes="(max-width: 480px) 100vw, 480px"
+                className="hero-image"
+              />
+            </div>
+          ))}
 
           <div className="hero-shade" />
           <div className="grain" />
@@ -869,7 +892,7 @@ export default function Home() {
                     alt={memory.alt}
                     fill
                     unoptimized
-                    sizes="(max-width: 768px) 78vw, 48vw"
+                    sizes="(max-width: 480px) 74vw, 355px"
                     className="memory-image"
                   />
                   <span className="memory-index">
@@ -972,7 +995,7 @@ export default function Home() {
             alt="영준이와 함께한 상호와 스테프의 가족"
             fill
             unoptimized
-            sizes="100vw"
+            sizes="(max-width: 480px) 100vw, 480px"
             className="ending-image"
           />
         </div>
