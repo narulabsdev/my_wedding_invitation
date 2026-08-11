@@ -2,85 +2,26 @@
 
 import Image from "next/image";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-
-type StoryMediaScene = {
-  id: string;
-  imageSrc: string;
-  alt: string;
-  futureVideoSrc?: string;
-};
-
-const storyMediaScenes: StoryMediaScene[] = [
-  {
-    id: "vancouver",
-    imageSrc: "/images/vancouver-story.webp",
-    alt: "밴쿠버 바닷가를 함께 걷는 두 사람",
-  },
-  {
-    id: "canada-wedding",
-    imageSrc: "/images/canada-wedding.webp",
-    alt: "캐나다 결혼식에서 손을 맞잡은 두 사람",
-  },
-  {
-    id: "family-three",
-    imageSrc: "/images/family-three.webp",
-    alt: "창가에서 아기를 안고 있는 세 가족",
-  },
-];
+import { CrossfadeVideoSequence } from "./components/common/CrossfadeVideoSequence";
+import { HorizontalStoryGallery } from "./components/common/HorizontalStoryGallery";
+import { ScrollScrubVideo } from "./components/common/ScrollScrubVideo";
+import { getInvitationContent } from "./content/invitation";
+import { useDeviceLocale } from "./lib/use-device-locale";
 
 const doorSealSrc = "/wedding/seals/sangho-steph-square-tassel.png";
-const criticalAssets = [
-  ...storyMediaScenes.map((scene) => scene.imageSrc),
-  doorSealSrc,
-];
-
-const memories = [
-  {
-    year: "VANCOUVER",
-    kicker: "Chapter 01",
-    title: "서로 다른 곳에서\n우리는 만났습니다",
-    body: "낯선 도시에서 시작된 두 사람의 이야기는 천천히 같은 방향을 바라보기 시작했습니다.",
-    image: "/images/vancouver-story.webp",
-    alt: "밴쿠버 바닷가를 걷는 두 사람",
-    className: "memory--wide",
-  },
-  {
-    year: "OUR DAYS",
-    kicker: "Chapter 02",
-    title: "함께한 시간이\n우리의 일상이 되고",
-    body: "계절을 지나고, 여행을 하고, 평범한 하루를 나누며 둘만의 집을 만들어 갔습니다.",
-    image: "/images/vancouver-story.webp",
-    alt: "밴쿠버에서 함께한 시간",
-    className: "memory--portrait memory--soft",
-  },
-  {
-    year: "05 · 05 · 2025",
-    kicker: "Chapter 03",
-    title: "우리는 서로의\n가족이 되었습니다",
-    body: "캐나다에서 작은 약속을 나누고 부부가 되었습니다.",
-    image: "/images/canada-wedding.webp",
-    alt: "캐나다 결혼식에서 손을 맞잡은 두 사람",
-    className: "memory--wide",
-  },
-  {
-    year: "07 · 10 · 2026",
-    kicker: "Chapter 04",
-    title: "그리고 가장 소중한\n선물이 찾아왔습니다",
-    body: "영준이가 태어나고 두 사람의 이야기는 세 사람의 이야기가 되었습니다.",
-    image: "/images/family-three.webp",
-    alt: "창가에서 아기를 안고 있는 가족",
-    className: "memory--portrait",
-  },
-  {
-    year: "WE BECAME THREE",
-    kicker: "Chapter 05",
-    title: "두 사람이 만나\n세 사람의 가족이 되었습니다",
-    body: "이제 한국의 가족과 친구들 앞에서 우리의 다음 장면을 이어가려 합니다.",
-    image: "/images/family-three.webp",
-    alt: "아기와 함께한 세 사람의 가족",
-    className: "memory--final",
-  },
-];
+const criticalAssets = [doorSealSrc];
+// Keep the door/entry travel close to its original distance while giving the
+// video more scroll room inside the taller 900svh section.
+const DOOR_OPENING_START = 0.013;
+const DOOR_OPENING_RANGE = 0.168;
+const DOOR_ENTRY_START = 0.168;
+const DOOR_ENTRY_RANGE = 0.105;
+const FIRST_VIDEO_START = 0.273;
+const FIRST_VIDEO_RANGE = 0.727;
+const OPENING_COPY_FADE_IN_START = 0.56;
+const OPENING_COPY_FADE_IN_END = 0.64;
+const OPENING_COPY_FADE_OUT_START = 0.74;
+const OPENING_COPY_FADE_OUT_END = 0.82;
 
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
@@ -355,13 +296,23 @@ const makeWanjaSegments = (openings: WanjaOpening[]) => {
 const wanjaSegments = makeWanjaSegments(wanjaOpenings);
 
 export default function Home() {
+  const locale = useDeviceLocale();
+  const {
+    storyVideos,
+    gallery: galleryCopy,
+    openingVideo: openingVideoCopy,
+    videoSequenceLabel,
+    galleryMemories,
+    door: doorCopy,
+    transition: transitionCopy,
+    ceremony: ceremonyCopy,
+    details: detailsCopy,
+    ending: endingCopy,
+  } = getInvitationContent(locale);
   const [loadProgress, setLoadProgress] = useState(2);
   const [isReady, setIsReady] = useState(false);
   const doorRef = useRef<HTMLElement>(null);
-  const heroRef = useRef<HTMLElement>(null);
-  const timelineRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLSpanElement>(null);
+  const doorVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -425,155 +376,147 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let frame = 0;
+    const door = doorRef.current;
+    if (!door) return;
 
-    const render = () => {
-      frame = 0;
-      const viewportHeight = window.innerHeight;
-      const door = doorRef.current;
+    const leftDoor = door.querySelector<HTMLElement>("[data-door-left]");
+    const rightDoor = door.querySelector<HTMLElement>("[data-door-right]");
+    const knot = door.querySelector<HTMLElement>("[data-door-knot]");
+    const invitation = door.querySelector<HTMLElement>("[data-door-invitation]");
+    const status = door.querySelector<HTMLElement>("[data-door-status]");
+    const prompt = door.querySelector<HTMLElement>("[data-door-prompt]");
+    const reveal = door.querySelector<HTMLElement>("[data-door-reveal]");
+    const ambient = door.querySelector<HTMLElement>(".door-ambient");
+    const behindCopy = door.querySelector<HTMLElement>("[data-door-behind-copy]");
+    const treeShadow = door.querySelector<HTMLElement>("[data-tree-shadow]");
+    const videoProgressBar = door.querySelector<HTMLElement>("[data-door-video-progress]");
+    const doorVideo = doorVideoRef.current;
+    let cancelled = false;
+    let destroyScrollScrub = () => {};
+    let refreshScrollScrub = () => {};
+    const playhead = { progress: 0 };
 
-      if (door) {
-        const rect = door.getBoundingClientRect();
-        const range = Math.max(1, door.offsetHeight - viewportHeight);
-        const progress = isReady ? clamp(-rect.top / range) : 0;
-        const opening = clamp((progress - 0.035) / 0.78);
-        const eased = 1 - Math.pow(1 - opening, 3);
-        const leftDoor = door.querySelector<HTMLElement>("[data-door-left]");
-        const rightDoor = door.querySelector<HTMLElement>("[data-door-right]");
-        const knot = door.querySelector<HTMLElement>("[data-door-knot]");
-        const invitation = door.querySelector<HTMLElement>("[data-door-invitation]");
-        const prompt = door.querySelector<HTMLElement>("[data-door-prompt]");
-        const reveal = door.querySelector<HTMLElement>("[data-door-reveal]");
-        const behindCopy = door.querySelector<HTMLElement>("[data-door-behind-copy]");
-        const treeShadow = door.querySelector<HTMLElement>("[data-tree-shadow]");
+    const render = (progress: number) => {
+      const opening = clamp(
+        (progress - DOOR_OPENING_START) / DOOR_OPENING_RANGE,
+      );
+      const entry = clamp(
+        (progress - DOOR_ENTRY_START) / DOOR_ENTRY_RANGE,
+      );
+      const videoProgress = clamp(
+        (progress - FIRST_VIDEO_START) / FIRST_VIDEO_RANGE,
+      );
+      const eased = 1 - Math.pow(1 - opening, 3);
 
-        if (leftDoor) {
-          leftDoor.style.transform = `perspective(1100px) translate3d(${-eased * 38}%, 0, 0) rotateY(${eased * 68}deg)`;
-          leftDoor.style.filter = `brightness(${1 - eased * 0.25})`;
-        }
-        if (rightDoor) {
-          rightDoor.style.transform = `perspective(1100px) translate3d(${eased * 38}%, 0, 0) rotateY(${-eased * 68}deg)`;
-          rightDoor.style.filter = `brightness(${1 - eased * 0.25})`;
-        }
-        if (knot) {
-          knot.style.opacity = String(clamp(1 - opening * 2.6));
-          knot.style.transform = `translate3d(-50%, -50%, 0) scale(${1 - opening * 0.18}) rotate(${opening * 5}deg)`;
-        }
-        if (invitation) {
-          invitation.style.opacity = String(clamp(1 - opening * 2.1));
-          invitation.style.transform = `translate3d(-50%, ${opening * -22}px, 0)`;
-        }
-        if (prompt) {
-          prompt.style.opacity = String(clamp(1 - opening * 4));
-        }
-        if (treeShadow) {
-          treeShadow.style.opacity = String(clamp(1 - opening * 2.2));
-        }
-        if (reveal) {
-          reveal.style.transform = `scale(${1.13 - eased * 0.1})`;
-          reveal.style.filter = `saturate(${0.62 + eased * 0.26}) brightness(${0.72 + eased * 0.16})`;
-        }
-        if (behindCopy) {
-          behindCopy.style.opacity = String(clamp((opening - 0.58) * 2.5));
-          behindCopy.style.transform = `translate3d(0, ${(1 - opening) * 26}px, 0)`;
-        }
+      if (leftDoor) {
+        leftDoor.style.transform = `perspective(1100px) translate3d(${-eased * 38 - entry * 34}%, 0, ${entry * 90}px) rotateY(${eased * 68 + entry * 12}deg)`;
+        leftDoor.style.filter = `brightness(${1 - eased * 0.25})`;
+        leftDoor.style.opacity = String(1 - entry);
       }
-
-      const hero = heroRef.current;
-
-      if (hero) {
-        const rect = hero.getBoundingClientRect();
-        const range = Math.max(1, hero.offsetHeight - viewportHeight);
-        const progress = clamp(-rect.top / range);
-        const layers = hero.querySelectorAll<HTMLElement>("[data-hero-layer]");
-        const intro = hero.querySelector<HTMLElement>("[data-hero-intro]");
-        const family = hero.querySelector<HTMLElement>("[data-hero-family]");
-        const scrollMark = hero.querySelector<HTMLElement>("[data-scroll-mark]");
-
-        if (layers[0]) {
-          layers[0].style.opacity = String(clamp(1 - progress * 2.6));
-          layers[0].style.transform = `scale(${1.03 + progress * 0.13}) translate3d(0, ${progress * -1.8}%, 0)`;
-        }
-        if (layers[1]) {
-          const appear = clamp((progress - 0.2) * 3.8);
-          const disappear = clamp((0.72 - progress) * 4.2);
-          layers[1].style.opacity = String(Math.min(appear, disappear));
-          layers[1].style.transform = `scale(${1.1 - progress * 0.06}) translate3d(${(0.45 - progress) * 2.5}%, 0, 0)`;
-        }
-        if (layers[2]) {
-          layers[2].style.opacity = String(clamp((progress - 0.55) * 3.2));
-          layers[2].style.transform = `scale(${1.12 - progress * 0.08}) translate3d(0, ${(0.75 - progress) * 2}%, 0)`;
-        }
-        if (intro) {
-          intro.style.opacity = String(clamp(1 - progress * 2.4));
-          intro.style.transform = `translate3d(0, ${progress * -42}px, 0)`;
-        }
-        if (family) {
-          family.style.opacity = String(clamp((progress - 0.62) * 3.4));
-          family.style.transform = `translate3d(0, ${(1 - progress) * 42}px, 0)`;
-        }
-        if (scrollMark) {
-          scrollMark.style.opacity = String(clamp(1 - progress * 4));
-        }
+      if (rightDoor) {
+        rightDoor.style.transform = `perspective(1100px) translate3d(${eased * 38 + entry * 34}%, 0, ${entry * 90}px) rotateY(${-eased * 68 - entry * 12}deg)`;
+        rightDoor.style.filter = `brightness(${1 - eased * 0.25})`;
+        rightDoor.style.opacity = String(1 - entry);
       }
-
-      const timeline = timelineRef.current;
-      const track = trackRef.current;
-
-      if (timeline && track) {
-        const rect = timeline.getBoundingClientRect();
-        const range = Math.max(1, timeline.offsetHeight - viewportHeight);
-        const progress = clamp(-rect.top / range);
-        const viewportWidth = timeline.clientWidth;
-        const maxX = Math.max(0, track.scrollWidth - viewportWidth);
-
-        track.style.transform = `translate3d(${-progress * maxX}px, 0, 0)`;
-        if (progressRef.current) {
-          progressRef.current.style.transform = `scaleX(${progress})`;
+      if (knot) {
+        knot.style.opacity = String(clamp(1 - opening * 2.6));
+        knot.style.transform = `translate3d(-50%, -50%, 0) scale(${1 - opening * 0.18}) rotate(${opening * 5}deg)`;
+      }
+      if (invitation) {
+        invitation.style.opacity = String(clamp(1 - opening * 2.1));
+        invitation.style.transform = `translate3d(-50%, ${opening * -22}px, 0)`;
+      }
+      if (prompt) {
+        prompt.style.opacity = String(clamp(1 - opening * 4));
+      }
+      if (status) {
+        status.style.opacity = String(clamp(1 - opening * 3));
+      }
+      if (treeShadow) {
+        treeShadow.style.opacity = String(clamp(1 - opening * 2.2));
+      }
+      if (reveal) {
+        const revealScale = 1.08 + Math.sin(entry * Math.PI) * 0.16 - entry * 0.08;
+        reveal.style.transform = `scale(${revealScale})`;
+        reveal.style.filter = `saturate(${0.62 + eased * 0.26}) brightness(${0.72 + eased * 0.16})`;
+      }
+      if (ambient) {
+        ambient.style.opacity = String(1 - entry);
+      }
+      if (behindCopy) {
+        const copyEntrance = clamp(
+          (videoProgress - OPENING_COPY_FADE_IN_START) /
+            (OPENING_COPY_FADE_IN_END - OPENING_COPY_FADE_IN_START),
+        );
+        const copyExit = clamp(
+          (OPENING_COPY_FADE_OUT_END - videoProgress) /
+            (OPENING_COPY_FADE_OUT_END - OPENING_COPY_FADE_OUT_START),
+        );
+        behindCopy.style.opacity = String(
+          Math.min(copyEntrance, copyExit),
+        );
+        behindCopy.style.transform = `translate3d(0, ${(0.69 - videoProgress) * 24}px, 0)`;
+      }
+      if (videoProgressBar) {
+        if (videoProgressBar.parentElement) {
+          videoProgressBar.parentElement.style.opacity = String(clamp((entry - 0.58) * 3));
         }
-
-        track
-          .querySelectorAll<HTMLElement>("[data-memory-card]")
-          .forEach((card) => {
-            const center =
-              card.offsetLeft -
-              progress * maxX +
-              card.offsetWidth / 2;
-            const distance = Math.abs(center - viewportWidth / 2);
-            const focus = clamp(1 - distance / (viewportWidth * 0.82));
-            const frameElement =
-              card.querySelector<HTMLElement>("[data-memory-frame]");
-            const copy = card.querySelector<HTMLElement>("[data-memory-copy]");
-
-            if (frameElement) {
-              frameElement.style.transform = `translate3d(0, ${(1 - focus) * 30}px, 0) rotate(${(0.5 - focus) * 3.2}deg) scale(${0.93 + focus * 0.07})`;
-              frameElement.style.opacity = String(0.36 + focus * 0.64);
-            }
-            if (copy) {
-              copy.style.opacity = String(0.35 + focus * 0.65);
-              copy.style.transform = `translate3d(0, ${(1 - focus) * 20}px, 0)`;
-            }
-          });
+        videoProgressBar.style.transform = `scaleX(${videoProgress})`;
+      }
+      if (doorVideo?.readyState && doorVideo.readyState >= HTMLMediaElement.HAVE_METADATA) {
+        const targetTime = videoProgress * Math.max(0, doorVideo.duration - 0.04);
+        if (Number.isFinite(targetTime) && Math.abs(doorVideo.currentTime - targetTime) > 1 / 120) {
+          doorVideo.currentTime = targetTime;
+        }
       }
     };
 
-    const requestRender = () => {
-      if (!frame) frame = window.requestAnimationFrame(render);
+    const setupScrollScrub = async () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        render(isReady ? 1 : 0);
+        return;
+      }
+
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled) return;
+
+      gsap.registerPlugin(ScrollTrigger);
+      const tween = gsap.to(playhead, {
+        progress: 1,
+        ease: "none",
+        onUpdate: () => render(isReady ? playhead.progress : 0),
+        scrollTrigger: {
+          trigger: door,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.45,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      refreshScrollScrub = () => ScrollTrigger.refresh();
+      destroyScrollScrub = () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      };
+      ScrollTrigger.refresh();
     };
 
-    const observer = new ResizeObserver(requestRender);
-    if (heroRef.current) observer.observe(heroRef.current);
-    if (trackRef.current) observer.observe(trackRef.current);
-
-    window.addEventListener("scroll", requestRender, { passive: true });
-    window.addEventListener("resize", requestRender);
-    requestRender();
+    const handleMetadata = () => render(playhead.progress);
+    const observer = new ResizeObserver(() => refreshScrollScrub());
+    observer.observe(door);
+    doorVideo?.addEventListener("loadedmetadata", handleMetadata);
+    render(0);
+    void setupScrollScrub();
 
     return () => {
+      cancelled = true;
       observer.disconnect();
-      window.removeEventListener("scroll", requestRender);
-      window.removeEventListener("resize", requestRender);
-      if (frame) window.cancelAnimationFrame(frame);
+      doorVideo?.removeEventListener("loadedmetadata", handleMetadata);
+      destroyScrollScrub();
     };
   }, [isReady]);
 
@@ -672,11 +615,12 @@ export default function Home() {
   };
 
   return (
-    <main className="mobile-invitation">
+    <main className="mobile-invitation" lang={locale} data-locale={locale}>
       <section
         ref={doorRef}
         className="door-scroll"
-        aria-label="전통 창호문 청첩장 열기"
+        aria-label={doorCopy.ariaLabel}
+        data-scroll-video={storyVideos[0].id}
       >
         <div
           className={`door-sticky ${isReady ? "is-ready" : "is-loading"}`}
@@ -688,19 +632,24 @@ export default function Home() {
           }
         >
           <div className="door-reveal" data-door-reveal>
-            <Image
-              src="/images/vancouver-story.webp"
-              alt=""
-              fill
-              priority
-              unoptimized
-              sizes="(max-width: 480px) 100vw, 480px"
-              className="door-reveal__image"
+            <video
+              ref={doorVideoRef}
+              className="door-reveal__video"
+              src={storyVideos[0].src}
+              poster={storyVideos[0].poster}
+              muted
+              playsInline
+              preload="auto"
+              tabIndex={-1}
+              aria-hidden="true"
             />
             <div className="door-reveal__shade" />
             <div className="door-behind-copy" data-door-behind-copy>
-              <span>VANCOUVER</span>
-              <p>우리의 이야기가 시작된 곳</p>
+              <span>{openingVideoCopy.eyebrow}</span>
+              <p>{openingVideoCopy.title}</p>
+            </div>
+            <div className="scrub-video-progress door-video-progress" aria-hidden="true">
+              <span data-door-video-progress />
             </div>
           </div>
 
@@ -762,30 +711,31 @@ export default function Home() {
                 className="door-seal__image"
               />
             </span>
-            <p>상호 · 스테프</p>
-            <h1>혼례에 초대합니다</h1>
-            <small>2026년 11월 1일</small>
+            <p>{doorCopy.coupleNames}</p>
+            <h1>{doorCopy.invitationTitle}</h1>
+            <small>{doorCopy.invitationDate}</small>
           </div>
 
           <div
             className="door-status"
+            data-door-status
             role="status"
             aria-live="polite"
             aria-label={
               isReady
-                ? "준비가 완료되었습니다. 아래로 스크롤하여 문을 열어주세요."
-                : `청첩장을 준비하고 있습니다. ${Math.round(loadProgress)}퍼센트`
+                ? doorCopy.readyAriaLabel
+                : doorCopy.loadingAriaLabel(Math.round(loadProgress))
             }
           >
             <p>
               {isReady ? (
                 <>
-                  아래로 내려 문을 열어주세요
-                  <span>SCROLL TO OPEN</span>
+                  {doorCopy.readyPrompt}
+                  <span>{doorCopy.readyPromptEyebrow}</span>
                 </>
               ) : (
                 <>
-                  이야기를 준비하고 있습니다
+                  {doorCopy.loadingPrompt}
                   <span className="loading-dots" aria-hidden="true">
                     <i />
                     <i />
@@ -805,209 +755,92 @@ export default function Home() {
         </div>
       </section>
 
-      <section ref={heroRef} className="hero-scroll" aria-label="가족 이야기 오프닝">
-        <div className="hero-sticky">
-          {storyMediaScenes.map((scene, index) => (
-            <div
-              className="hero-layer"
-              data-hero-layer
-              data-media-kind="image"
-              data-story-scene={scene.id}
-              key={scene.id}
-            >
-              <Image
-                src={scene.imageSrc}
-                alt=""
-                fill
-                priority={index === 0}
-                unoptimized
-                sizes="(max-width: 480px) 100vw, 480px"
-                className="hero-image"
-              />
-            </div>
-          ))}
+      <ScrollScrubVideo scene={storyVideos[1]} priority />
 
-          <div className="hero-shade" />
-          <div className="grain" />
+      <HorizontalStoryGallery
+        ariaLabel={galleryCopy.ariaLabel}
+        heading={galleryCopy.heading}
+        hint={galleryCopy.hint}
+        openPhotoLabel={galleryCopy.openPhotoLabel}
+        closePhotoLabel={galleryCopy.closePhotoLabel}
+        lightboxLabel={galleryCopy.lightboxLabel}
+        items={galleryMemories}
+      />
 
-          <div className="hero-copy hero-copy--intro" data-hero-intro>
-            <p className="eyebrow">Our story · Vancouver to Seoul</p>
-            <h1>
-              Sang Ho
-              <span>&amp;</span>
-              Steph
-            </h1>
-            <p className="hero-date">2026 · 11 · 01</p>
-          </div>
-
-          <div className="hero-copy hero-copy--family" data-hero-family>
-            <p className="eyebrow">We became a family</p>
-            <h2>
-              두 사람이 만나
-              <br />세 사람의 가족이 되었습니다
-            </h2>
-          </div>
-
-          <div className="scroll-mark" data-scroll-mark aria-hidden="true">
-            <span>SCROLL</span>
-            <i />
-          </div>
-        </div>
-      </section>
-
-      <section className="story-bridge">
-        <p className="section-number">01 · OUR STORY</p>
-        <h2>
-          캐나다에서 시작된 우리의 이야기가
-          <br />
-          한국에서 새로운 장면으로 이어집니다.
-        </h2>
-        <p className="story-bridge__hint">
-          아래로 스크롤하면 이야기가 옆으로 펼쳐집니다
-        </p>
-      </section>
-
-      <section
-        ref={timelineRef}
-        className="timeline-scroll"
-        aria-label="우리 가족의 타임라인"
-      >
-        <div className="timeline-sticky">
-          <header className="timeline-heading">
-            <span>OUR TIMELINE</span>
-            <span>Keep scrolling ↓</span>
-          </header>
-
-          <div ref={trackRef} className="timeline-track">
-            <div className="timeline-spacer" aria-hidden="true" />
-            {memories.map((memory, index) => (
-              <article
-                className={`memory-card ${memory.className}`}
-                data-memory-card
-                key={memory.kicker}
-              >
-                <div className="memory-visual" data-memory-frame>
-                  <Image
-                    src={memory.image}
-                    alt={memory.alt}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 480px) 74vw, 355px"
-                    className="memory-image"
-                  />
-                  <span className="memory-index">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div className="memory-copy" data-memory-copy>
-                  <p>{memory.kicker}</p>
-                  <h3>
-                    {memory.title.split("\n").map((line) => (
-                      <span key={line}>{line}</span>
-                    ))}
-                  </h3>
-                  <p className="memory-body">{memory.body}</p>
-                </div>
-                <div className="timeline-point">
-                  <i />
-                  <strong>{memory.year}</strong>
-                </div>
-              </article>
-            ))}
-            <div className="timeline-end">
-              <span>그리고</span>
-              <strong>SEOUL</strong>
-              <small>2026 · 11 · 01</small>
-            </div>
-          </div>
-
-          <div className="timeline-rule" aria-hidden="true">
-            <span ref={progressRef} />
-          </div>
-        </div>
-      </section>
+      <CrossfadeVideoSequence
+        scenes={storyVideos.slice(2)}
+        ariaLabel={videoSequenceLabel}
+      />
 
       <section className="invitation-transition">
         <div className="hanji-mark" aria-hidden="true">
-          <span>상</span>
-          <span>스</span>
+          <span>{transitionCopy.mark[0]}</span>
+          <span>{transitionCopy.mark[1]}</span>
         </div>
-        <p className="section-number">02 · INVITATION</p>
+        <p className="section-number">{transitionCopy.sectionLabel}</p>
         <h2>
-          이제 한국의 소중한 분들 앞에서
+          {transitionCopy.title[0]}
           <br />
-          우리의 다음 장면을 이어가려 합니다.
+          {transitionCopy.title[1]}
         </h2>
         <p>
-          함께 자리하시어 새로운 시작을
+          {transitionCopy.body[0]}
           <br />
-          따뜻한 마음으로 축복해 주세요.
+          {transitionCopy.body[1]}
         </p>
       </section>
 
       <section className="ceremony">
-        <p className="ceremony__label">THE CEREMONY</p>
-        <p className="ceremony__month">NOVEMBER</p>
+        <p className="ceremony__label">{ceremonyCopy.label}</p>
+        <p className="ceremony__month">{ceremonyCopy.month}</p>
         <div className="ceremony__date">
-          <span>SUN</span>
-          <strong>01</strong>
-          <span>2026</span>
+          <span>{ceremonyCopy.weekday}</span>
+          <strong>{ceremonyCopy.day}</strong>
+          <span>{ceremonyCopy.year}</span>
         </div>
         <div className="ceremony__rule" />
-        <h2>롯데월드 전통혼례장</h2>
-        <p>2026년 11월 1일 일요일 · 오후 12시</p>
-        <p className="ceremony__address">
-          서울특별시 송파구 올림픽로 240
-        </p>
+        <h2>{ceremonyCopy.venue}</h2>
+        <p>{ceremonyCopy.dateTime}</p>
+        <p className="ceremony__address">{ceremonyCopy.address}</p>
         <div className="ceremony__actions">
-          <button type="button">달력에 저장</button>
-          <button type="button">지도 보기</button>
+          <button type="button">{ceremonyCopy.calendarAction}</button>
+          <button type="button">{ceremonyCopy.mapAction}</button>
         </div>
       </section>
 
       <section className="details">
         <article>
-          <span>LOCATION</span>
-          <h3>오시는 길</h3>
+          <span>{detailsCopy.locationLabel}</span>
+          <h3>{detailsCopy.locationTitle}</h3>
           <p>
-            지하철 2호선·8호선 잠실역
+            {detailsCopy.locationBody[0]}
             <br />
-            롯데월드 전통혼례장
+            {detailsCopy.locationBody[1]}
           </p>
-          <button type="button">교통 안내 확인</button>
+          <button type="button">{detailsCopy.transportAction}</button>
         </article>
         <article>
-          <span>RSVP</span>
-          <h3>참석 여부</h3>
+          <span>{detailsCopy.rsvpLabel}</span>
+          <h3>{detailsCopy.rsvpTitle}</h3>
           <p>
-            귀한 걸음 준비에 참고할 수 있도록
+            {detailsCopy.rsvpBody[0]}
             <br />
-            참석 여부를 알려주세요.
+            {detailsCopy.rsvpBody[1]}
           </p>
-          <button type="button">참석 여부 전달</button>
+          <button type="button">{detailsCopy.rsvpAction}</button>
         </article>
       </section>
 
       <footer className="ending">
-        <div className="ending-photo">
-          <Image
-            src="/images/family-three.webp"
-            alt="영준이와 함께한 상호와 스테프의 가족"
-            fill
-            unoptimized
-            sizes="(max-width: 480px) 100vw, 480px"
-            className="ending-image"
-          />
-        </div>
         <div className="ending-shade" />
         <div className="ending-copy">
-          <p>THANK YOU</p>
+          <p>{endingCopy.label}</p>
           <h2>
-            우리의 이야기를
+            {endingCopy.title[0]}
             <br />
-            함께해 주셔서 감사합니다.
+            {endingCopy.title[1]}
           </h2>
-          <span>Sang Ho · Steph · Youngjoon</span>
+          <span>{endingCopy.familyNames}</span>
         </div>
       </footer>
     </main>
