@@ -6,6 +6,7 @@ import { HorizontalStoryGallery } from "./components/common/HorizontalStoryGalle
 import { ScrollScrubVideo } from "./components/common/ScrollScrubVideo";
 import { getInvitationContent } from "./content/invitation";
 import { hasPassedDoorOpening } from "./lib/door-visibility";
+import { installStableKakaoScrollViewport } from "./lib/stable-scroll-viewport";
 import { useDeviceLocale } from "./lib/use-device-locale";
 import { createVideoScrubber } from "./lib/video-scrubber";
 
@@ -316,6 +317,8 @@ export default function Home() {
   const doorVideoRef = useRef<HTMLVideoElement>(null);
   const doorVideoCanvasRef = useRef<HTMLCanvasElement>(null);
 
+  useEffect(() => installStableKakaoScrollViewport(), []);
+
   useEffect(() => {
     let cancelled = false;
     let readyTimer = 0;
@@ -513,6 +516,7 @@ export default function Home() {
       if (cancelled) return;
 
       gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
       const tween = gsap.to(playhead, {
         progress: 1,
         ease: "none",

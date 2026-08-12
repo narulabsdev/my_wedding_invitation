@@ -106,6 +106,7 @@ export function ScrollScrubVideo({
       if (cancelled) return;
 
       gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
       const tween = gsap.to(playhead, {
         progress: 1,
         ease: "none",

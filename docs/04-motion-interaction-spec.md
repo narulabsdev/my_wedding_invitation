@@ -175,7 +175,7 @@ perspective: 1100px
 
 ## 6. 스크롤 연동 복수 영상
 
-현재 구현은 밴쿠버, 첫 데이트, 동거와 쿠키, 반지 교환의 네 개 MP4 장면으로 동작합니다. 각 영상 구간의 세로 스크롤 진행률을 영상의 `currentTime`으로 변환하며, 자동 재생하지 않습니다.
+현재 구현은 밴쿠버, 첫 데이트, 동거와 쿠키, 반지 교환, 캐나다 결혼의 다섯 개 MP4 장면으로 동작합니다. 각 영상 구간의 세로 스크롤 진행률을 영상의 `currentTime`으로 변환하며, 자동 재생하지 않습니다.
 
 ### 스크롤 범위
 
@@ -219,6 +219,8 @@ currentTime = progress × (videoDuration - 0.04)
 - 자동 재생하지 않고 스크롤 scrubbing을 유지
 - iOS 카카오톡 WKWebView는 실제 영상 프레임이 compositor에 제출될 때까지 poster를 유지하고 inline video로 전환
 - Android 카카오톡은 정방향 스크롤에서 숨긴 영상을 연속 재생해 canvas에 프레임을 복사하고, 역방향·큰 점프에만 seek 사용
+- Android 카카오톡은 최초 viewport 높이를 스크롤 거리 기준으로 유지하고, 상·하단바로 인한 높이-only resize에서는 ScrollTrigger를 refresh하지 않음
+- 화면 회전이나 가로폭 변경 때만 안정 viewport 높이를 갱신하고 전체 스크롤 구간을 다시 계산
 - 동적 상·하단바 resize 후에도 실제 스크롤 오프셋으로 오프닝 문 노출 상태를 다시 고정
 - `prefers-reduced-motion`에서는 영상 대신 정적 poster와 핵심 카피 제공
 

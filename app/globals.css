@@ -67,7 +67,7 @@ select {
 .door-scroll {
   position: relative;
   z-index: 10;
-  height: 900svh;
+  height: calc(var(--stable-scroll-vh, 1svh) * 900);
   background: #17140f;
 }
 
@@ -718,29 +718,29 @@ select {
 
 .scrub-video-scroll {
   position: relative;
-  height: 320svh;
+  height: calc(var(--stable-scroll-vh, 1svh) * 320);
   background: #11130f;
 }
 
 .scrub-video-scroll--first-date {
   z-index: 11;
-  height: 760svh;
-  margin-top: -100svh;
+  height: calc(var(--stable-scroll-vh, 1svh) * 760);
+  margin-top: calc(var(--stable-scroll-vh, 1svh) * -100);
   background: #f1f0ed;
 }
 
 .scrub-video-scroll--home-and-cookie {
   z-index: 11;
-  height: 760svh;
-  margin-top: -100svh;
+  height: calc(var(--stable-scroll-vh, 1svh) * 760);
+  margin-top: calc(var(--stable-scroll-vh, 1svh) * -100);
   background: var(--color-gallery-paper-light);
 }
 
 .scrub-video-scroll--ring-exchange,
 .scrub-video-scroll--canada-wedding {
   z-index: 11;
-  height: 760svh;
-  margin-top: -100svh;
+  height: calc(var(--stable-scroll-vh, 1svh) * 760);
+  margin-top: calc(var(--stable-scroll-vh, 1svh) * -100);
   background: var(--color-gallery-paper-light);
 }
 
@@ -1236,10 +1236,14 @@ select {
 }
 
 .timeline-scroll {
+  --gallery-scroll-step: calc(var(--stable-scroll-vh, 1svh) * 65);
   position: relative;
   z-index: 11;
-  height: calc((var(--gallery-items, 5) * 65svh) + 340svh);
-  margin-top: -140svh;
+  height: calc(
+    (var(--gallery-items, 5) * var(--gallery-scroll-step)) +
+    (var(--stable-scroll-vh, 1svh) * 340)
+  );
+  margin-top: calc(var(--stable-scroll-vh, 1svh) * -140);
   background: transparent;
 }
 
@@ -1630,7 +1634,7 @@ select {
 .video-sequence-scroll {
   position: relative;
   z-index: 12;
-  height: 720svh;
+  height: calc(var(--stable-scroll-vh, 1svh) * 720);
   margin-top: 0;
   background: transparent;
 }
@@ -2084,7 +2088,7 @@ select {
 }
 
 .mobile-invitation .hero-scroll {
-  height: 260svh;
+  height: calc(var(--stable-scroll-vh, 1svh) * 260);
 }
 
 .mobile-invitation .hero-copy {
@@ -2137,7 +2141,10 @@ select {
 }
 
 .mobile-invitation .timeline-scroll {
-  height: calc((var(--gallery-items, 5) * 65svh) + 340svh);
+  height: calc(
+    (var(--gallery-items, 5) * var(--gallery-scroll-step)) +
+    (var(--stable-scroll-vh, 1svh) * 340)
+  );
 }
 
 .mobile-invitation .timeline-heading span:last-child {
@@ -2265,7 +2272,10 @@ select {
   }
 
   .timeline-scroll {
-    height: calc((var(--gallery-items, 5) * 65svh) + 340svh);
+    height: calc(
+      (var(--gallery-items, 5) * var(--gallery-scroll-step)) +
+      (var(--stable-scroll-vh, 1svh) * 340)
+    );
   }
 
   .timeline-heading {
