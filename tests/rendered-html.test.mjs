@@ -36,6 +36,7 @@ test("renders development preview metadata", async () => {
   const firstDateVideo = html.indexOf("/videos/002-scroll.mp4");
   const homeAndCookieVideo = html.indexOf("/videos/003-scroll.mp4");
   const ringExchangeVideo = html.indexOf("/videos/004-scroll.mp4");
+  const canadaWeddingVideo = html.indexOf("/videos/005-scroll.mp4");
   const gallery = html.indexOf("OUR GALLERY");
   const invitation = html.indexOf('class="gallery-invitation-handoff"');
 
@@ -50,11 +51,26 @@ test("renders development preview metadata", async () => {
     "renders the ring-exchange video after the moving-in and Cookie video",
   );
   assert.ok(
-    gallery > ringExchangeVideo,
-    "renders the horizontal gallery after the ring-exchange video",
+    canadaWeddingVideo > ringExchangeVideo,
+    "renders the Canada wedding video after the ring-exchange video",
+  );
+  assert.ok(
+    gallery > canadaWeddingVideo,
+    "renders the horizontal gallery after the Canada wedding video",
   );
   assert.ok(invitation > gallery, "renders the invitation message after the gallery");
   assert.doesNotMatch(html, /\/videos\/(?:canada-wedding|family-home)\.mp4/);
+  const videoTags = html.match(/<video\b[^>]*>/g) ?? [];
+  assert.equal(videoTags.length, 5, "renders all five scroll-scrub videos");
+  videoTags.forEach((videoTag) => {
+    assert.match(
+      videoTag,
+      /\bposter="\/images\/video-posters\/00[1-5]\.webp"/,
+      "gives every scrub video a static poster fallback",
+    );
+    assert.match(videoTag, /\bplaysinline=""/i, "keeps videos inline on mobile");
+    assert.doesNotMatch(videoTag, /\bcontrols(?:=|\s|>)/, "does not expose native video controls");
+  });
   assert.match(html, /VANCOUVER/);
   assert.match(html, /data-locale="en"/);
   assert.match(html, /Where our story begins/);
@@ -66,14 +82,16 @@ test("renders development preview metadata", async () => {
   assert.match(html, /2023\.04\.06/);
   assert.match(html, /The proposal/);
   assert.match(html, /2024\.10\.08/);
+  assert.match(html, /Our Canadian wedding/);
+  assert.match(html, /2025\.05\.05/);
   assert.match(html, /--gallery-items:20/);
   assert.equal(
     (html.match(/class="memory-card[^"]*"/g) ?? []).length,
     20,
     "renders all 20 gallery photos",
   );
-  assert.match(html, /\/images\/gallery\/001_/);
-  assert.match(html, /\/images\/gallery\/018_/);
+  assert.match(html, /\/images\/gallery\/gallery-01\.jpg/);
+  assert.match(html, /\/images\/gallery\/gallery-20\.jpg/);
   assert.doesNotMatch(html, /Our story · Vancouver to Seoul/);
   assert.doesNotMatch(
     html,

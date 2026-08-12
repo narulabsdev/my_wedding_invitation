@@ -34,10 +34,10 @@ type StoryVideoText = Pick<StoryVideo, "ariaLabel" | "eyebrow" | "title"> & {
   labels?: readonly string[];
 };
 type GalleryMemoryText = Pick<GalleryMemory, "title" | "body" | "alt">;
-type Four<T> = readonly [T, T, T, T];
+type Five<T> = readonly [T, T, T, T, T];
 
 type InvitationCopy = {
-  storyVideos: Four<StoryVideoText>;
+  storyVideos: Five<StoryVideoText>;
   gallery: {
     ariaLabel: string;
     heading: string;
@@ -109,20 +109,23 @@ type StoryVideoAsset = Pick<StoryVideo, "id" | "src" | "poster" | "detail"> & {
   labelWindows?: readonly Omit<StoryVideoLabel, "text">[];
 };
 
-const storyVideoAssets: Four<StoryVideoAsset> = [
+const storyVideoAssets: Five<StoryVideoAsset> = [
   {
     id: "vancouver",
     src: "/videos/001-scroll.mp4",
+    poster: "/images/video-posters/001.webp",
     detail: "2026 · 11 · 01",
   },
   {
     id: "first-date",
     src: "/videos/002-scroll.mp4",
+    poster: "/images/video-posters/002.webp",
     detail: "2022 · 10 · 08",
   },
   {
     id: "home-and-cookie",
     src: "/videos/003-scroll.mp4",
+    poster: "/images/video-posters/003.webp",
     labelWindows: [
       {
         id: "moving-in",
@@ -143,12 +146,27 @@ const storyVideoAssets: Four<StoryVideoAsset> = [
   {
     id: "ring-exchange",
     src: "/videos/004-scroll.mp4",
+    poster: "/images/video-posters/004.webp",
     labelWindows: [
       {
         id: "proposal",
         date: "2024.10.08",
         start: 0.32,
         end: 0.76,
+        placement: "top-left",
+      },
+    ],
+  },
+  {
+    id: "canada-wedding",
+    src: "/videos/005-scroll.mp4",
+    poster: "/images/video-posters/005.webp",
+    labelWindows: [
+      {
+        id: "canada-wedding",
+        date: "2025.05.05",
+        start: 0.2,
+        end: 0.78,
         placement: "top-left",
       },
     ],
@@ -305,6 +323,12 @@ const localizedCopy = {
         eyebrow: "",
         title: [],
         labels: ["프러포즈"],
+      },
+      {
+        ariaLabel: "두 사람의 캐나다 결혼식 이야기 영상",
+        eyebrow: "",
+        title: [],
+        labels: ["캐나다 결혼"],
       },
     ],
     gallery: {
@@ -479,6 +503,12 @@ const localizedCopy = {
         eyebrow: "",
         title: [],
         labels: ["プロポーズ"],
+      },
+      {
+        ariaLabel: "二人のカナダでの結婚式の映像",
+        eyebrow: "",
+        title: [],
+        labels: ["カナダでの結婚式"],
       },
     ],
     gallery: {
@@ -656,6 +686,12 @@ const localizedCopy = {
         eyebrow: "",
         title: [],
         labels: ["The proposal"],
+      },
+      {
+        ariaLabel: "The story of our wedding in Canada",
+        eyebrow: "",
+        title: [],
+        labels: ["Our Canadian wedding"],
       },
     ],
     gallery: {

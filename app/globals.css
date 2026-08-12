@@ -93,12 +93,28 @@ select {
 .door-reveal {
   z-index: 0;
   overflow: hidden;
-  filter: saturate(0.62) brightness(0.72);
+  background: #fff;
   transform: scale(1.13);
-  will-change: transform, filter;
+  will-change: transform;
 }
 
 .door-reveal__image,
+.door-reveal__media {
+  width: 100%;
+  height: 100%;
+}
+
+.door-reveal__media {
+  background: #fff;
+  will-change: filter;
+}
+
+.door-reveal__media[data-scrub-ready="true"] {
+  filter:
+    saturate(var(--door-media-saturation, 0.62))
+    brightness(var(--door-media-brightness, 0.72));
+}
+
 .door-reveal__video {
   width: 100%;
   height: 100%;
@@ -110,7 +126,7 @@ select {
   display: block;
   object-fit: contain;
   object-position: center;
-  background: #11130f;
+  background: #fff;
 }
 
 .door-reveal__shade {
@@ -121,12 +137,27 @@ select {
     linear-gradient(90deg, rgb(7 10 7 / 22%), transparent 55%);
 }
 
+.door-reveal__media:not([data-scrub-ready="true"]) ~ .door-reveal__shade {
+  opacity: 0;
+}
+
 .door-ambient {
   z-index: 1;
   pointer-events: none;
   background:
     radial-gradient(circle at 50% 42%, rgb(255 244 215 / 9%), transparent 36%),
     linear-gradient(90deg, rgb(0 0 0 / 14%), transparent 9% 91%, rgb(0 0 0 / 14%));
+}
+
+.door-scroll.is-past-opening .door-panel,
+.door-scroll.is-past-opening .traditional-knot,
+.door-scroll.is-past-opening .door-invitation,
+.door-scroll.is-past-opening .door-status,
+.door-scroll.is-past-opening .door-scroll-prompt,
+.door-scroll.is-past-opening .tree-shadow {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .door-panel {
@@ -705,7 +736,8 @@ select {
   background: var(--color-gallery-paper-light);
 }
 
-.scrub-video-scroll--ring-exchange {
+.scrub-video-scroll--ring-exchange,
+.scrub-video-scroll--canada-wedding {
   z-index: 11;
   height: 760svh;
   margin-top: -100svh;
@@ -723,12 +755,62 @@ select {
   background: #11130f;
 }
 
-.scrub-video-media,
+.scrub-video-frame,
 .scrub-video-shade {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+.scrub-video-frame {
+  z-index: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
+.scrub-video-media,
+.scrub-video-canvas,
+.scrub-video-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scrub-video-frame > video,
+.scrub-video-canvas {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scrub-video-poster {
+  z-index: 2;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.scrub-video-frame[data-scrub-ready="true"] .scrub-video-poster {
+  opacity: 0;
+}
+
+.scrub-video-frame[data-scrub-ready="true"][data-scrub-renderer="video"]
+  > video,
+.scrub-video-frame[data-scrub-ready="true"][data-scrub-renderer="canvas"]
+  .scrub-video-canvas {
+  opacity: 1;
+}
+
+.scrub-video-media::-webkit-media-controls,
+.scrub-video-media::-webkit-media-controls-overlay-play-button,
+.scrub-video-media::-webkit-media-controls-start-playback-button,
+.door-reveal__video::-webkit-media-controls,
+.door-reveal__video::-webkit-media-controls-overlay-play-button,
+.door-reveal__video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
 }
 
 .scrub-video-shade.scrub-video-shade--first-date {
@@ -741,7 +823,8 @@ select {
 }
 
 .scrub-video-scroll--home-and-cookie .scrub-video-sticky,
-.scrub-video-scroll--ring-exchange .scrub-video-sticky {
+.scrub-video-scroll--ring-exchange .scrub-video-sticky,
+.scrub-video-scroll--canada-wedding .scrub-video-sticky {
   background: var(--color-gallery-paper-light);
 }
 
@@ -754,7 +837,8 @@ select {
   );
 }
 
-.scrub-video-shade.scrub-video-shade--ring-exchange {
+.scrub-video-shade.scrub-video-shade--ring-exchange,
+.scrub-video-shade.scrub-video-shade--canada-wedding {
   background: linear-gradient(
     180deg,
     var(--color-story-video-wash),
@@ -764,10 +848,9 @@ select {
 }
 
 .scrub-video-media {
-  z-index: 0;
   object-fit: cover;
   object-position: center;
-  background: #11130f;
+  background: #fff;
 }
 
 .scrub-video-shade {
@@ -905,12 +988,14 @@ select {
 }
 
 .scrub-video-scroll--home-and-cookie .scrub-video-progress,
-.scrub-video-scroll--ring-exchange .scrub-video-progress {
+.scrub-video-scroll--ring-exchange .scrub-video-progress,
+.scrub-video-scroll--canada-wedding .scrub-video-progress {
   background: var(--color-story-progress-track);
 }
 
 .scrub-video-scroll--home-and-cookie .scrub-video-progress span,
-.scrub-video-scroll--ring-exchange .scrub-video-progress span {
+.scrub-video-scroll--ring-exchange .scrub-video-progress span,
+.scrub-video-scroll--canada-wedding .scrub-video-progress span {
   background: var(--color-gallery-ink);
 }
 
@@ -2303,8 +2388,11 @@ select {
   }
 
   .door-reveal {
-    filter: saturate(0.82) brightness(0.86) !important;
     transform: scale(1.03) !important;
+  }
+
+  .door-reveal__media[data-scrub-ready="true"] {
+    filter: saturate(0.82) brightness(0.86) !important;
   }
 
   .door-behind-copy {

@@ -5,7 +5,9 @@ import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { HorizontalStoryGallery } from "./components/common/HorizontalStoryGallery";
 import { ScrollScrubVideo } from "./components/common/ScrollScrubVideo";
 import { getInvitationContent } from "./content/invitation";
+import { hasPassedDoorOpening } from "./lib/door-visibility";
 import { useDeviceLocale } from "./lib/use-device-locale";
+import { createVideoScrubber } from "./lib/video-scrubber";
 
 const doorSealSrc = "/wedding/seals/sangho-steph-square-tassel.png";
 const criticalAssets = [doorSealSrc];
@@ -310,7 +312,9 @@ export default function Home() {
   const [loadProgress, setLoadProgress] = useState(2);
   const [isReady, setIsReady] = useState(false);
   const doorRef = useRef<HTMLElement>(null);
+  const doorVideoFrameRef = useRef<HTMLDivElement>(null);
   const doorVideoRef = useRef<HTMLVideoElement>(null);
+  const doorVideoCanvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -388,11 +392,41 @@ export default function Home() {
     const behindCopy = door.querySelector<HTMLElement>("[data-door-behind-copy]");
     const treeShadow = door.querySelector<HTMLElement>("[data-tree-shadow]");
     const videoProgressBar = door.querySelector<HTMLElement>("[data-door-video-progress]");
+    const doorVideoFrame = doorVideoFrameRef.current;
     const doorVideo = doorVideoRef.current;
+    const doorVideoCanvas = doorVideoCanvasRef.current;
     let cancelled = false;
     let destroyScrollScrub = () => {};
     let refreshScrollScrub = () => {};
     const playhead = { progress: 0 };
+    const videoScrubber = doorVideo && doorVideoCanvas && doorVideoFrame
+      ? createVideoScrubber({
+        video: doorVideo,
+        canvas: doorVideoCanvas,
+        frame: doorVideoFrame,
+        fit: "contain",
+      })
+      : null;
+    let doorVisibilityFrame = 0;
+
+    const syncDoorOpeningVisibility = () => {
+      doorVisibilityFrame = 0;
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      const scrollOffset = Math.max(0, -door.getBoundingClientRect().top);
+      door.classList.toggle(
+        "is-past-opening",
+        hasPassedDoorOpening(scrollOffset, viewportHeight),
+      );
+    };
+    const requestDoorOpeningVisibility = () => {
+      if (doorVisibilityFrame) return;
+      doorVisibilityFrame = window.requestAnimationFrame(syncDoorOpeningVisibility);
+    };
+
+    window.addEventListener("scroll", requestDoorOpeningVisibility, { passive: true });
+    window.addEventListener("resize", requestDoorOpeningVisibility);
+    window.visualViewport?.addEventListener("resize", requestDoorOpeningVisibility);
+    syncDoorOpeningVisibility();
 
     const render = (progress: number) => {
       const opening = clamp(
@@ -436,7 +470,9 @@ export default function Home() {
       if (reveal) {
         const revealScale = 1.08 + Math.sin(entry * Math.PI) * 0.16 - entry * 0.08;
         reveal.style.transform = `scale(${revealScale})`;
-        reveal.style.filter = `saturate(${0.62 + eased * 0.26}) brightness(${0.72 + eased * 0.16})`;
+        reveal.style.removeProperty("filter");
+        reveal.style.setProperty("--door-media-saturation", String(0.62 + eased * 0.26));
+        reveal.style.setProperty("--door-media-brightness", String(0.72 + eased * 0.16));
       }
       if (ambient) {
         ambient.style.opacity = String(1 - entry);
@@ -461,12 +497,7 @@ export default function Home() {
         }
         videoProgressBar.style.transform = `scaleX(${videoProgress})`;
       }
-      if (doorVideo?.readyState && doorVideo.readyState >= HTMLMediaElement.HAVE_METADATA) {
-        const targetTime = videoProgress * Math.max(0, doorVideo.duration - 0.04);
-        if (Number.isFinite(targetTime) && Math.abs(doorVideo.currentTime - targetTime) > 1 / 120) {
-          doorVideo.currentTime = targetTime;
-        }
-      }
+      videoScrubber?.seek(videoProgress);
     };
 
     const setupScrollScrub = async () => {
@@ -492,6 +523,11 @@ export default function Home() {
           end: "bottom bottom",
           scrub: 0.45,
           invalidateOnRefresh: true,
+          onRefresh: (trigger) => {
+            playhead.progress = trigger.progress;
+            render(isReady ? trigger.progress : 0);
+            syncDoorOpeningVisibility();
+          },
         },
       });
 
@@ -513,7 +549,14 @@ export default function Home() {
     return () => {
       cancelled = true;
       observer.disconnect();
+      window.removeEventListener("scroll", requestDoorOpeningVisibility);
+      window.removeEventListener("resize", requestDoorOpeningVisibility);
+      window.visualViewport?.removeEventListener("resize", requestDoorOpeningVisibility);
+      if (doorVisibilityFrame) window.cancelAnimationFrame(doorVisibilityFrame);
+      reveal?.style.removeProperty("--door-media-saturation");
+      reveal?.style.removeProperty("--door-media-brightness");
       doorVideo?.removeEventListener("loadedmetadata", handleMetadata);
+      videoScrubber?.destroy();
       destroyScrollScrub();
     };
   }, [isReady]);
@@ -630,17 +673,24 @@ export default function Home() {
           }
         >
           <div className="door-reveal" data-door-reveal>
-            <video
-              ref={doorVideoRef}
-              className="door-reveal__video"
-              src={storyVideos[0].src}
-              poster={storyVideos[0].poster}
-              muted
-              playsInline
-              preload="auto"
-              tabIndex={-1}
-              aria-hidden="true"
-            />
+            <div ref={doorVideoFrameRef} className="scrub-video-frame door-reveal__media">
+              <video
+                ref={doorVideoRef}
+                className="door-reveal__video"
+                src={storyVideos[0].src}
+                poster={storyVideos[0].poster}
+                muted
+                playsInline
+                preload="auto"
+                tabIndex={-1}
+                aria-hidden="true"
+              />
+              <canvas
+                ref={doorVideoCanvasRef}
+                className="scrub-video-canvas door-reveal__canvas"
+                aria-hidden="true"
+              />
+            </div>
             <div className="door-reveal__shade" />
             <div className="door-behind-copy" data-door-behind-copy>
               <span>{openingVideoCopy.eyebrow}</span>
@@ -758,6 +808,8 @@ export default function Home() {
       <ScrollScrubVideo scene={storyVideos[2]} />
 
       <ScrollScrubVideo scene={storyVideos[3]} />
+
+      <ScrollScrubVideo scene={storyVideos[4]} />
 
       <HorizontalStoryGallery
         ariaLabel={galleryCopy.ariaLabel}

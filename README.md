@@ -6,7 +6,7 @@ Drizzle support.
 
 ## Prerequisites
 
-- Node.js `>=22.13.0`
+- Node.js 24 LTS
 - Linux with `flock`, `curl`, and GNU `timeout`
 
 ## Sites Lifecycle
@@ -101,6 +101,25 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 Use build and validation commands for targeted diagnosis after a remote failure, not as part of the normal checkpoint path.
 
 The timeout defaults can be overridden for a controlled canary with `SITES_INSTALL_TIMEOUT`, `SITES_INSTALL_KILL_AFTER`, `SITES_BUILD_TIMEOUT`, and `SITES_BUILD_KILL_AFTER`. A timeout fails the command; the helpers never retry an unchanged install or build.
+
+# Wedding Seal Assets
+
+프로젝트 배치 경로:
+
+```text
+public/wedding/seals/
+```
+
+## 파일 목록
+
+- `sangho-steph-square-tassel.png`
+- `sangho-steph-circle-wave.png`
+- `sangho-steph-vertical-name.png`
+- `sangho-steph-circle-plum.png`
+- `sangho-steph-clover-tassel.png`
+- `sangho-steph-rounded-square-wave.png`
+
+최종안을 결정한 뒤 선택한 파일을 `main-seal.png`로 복사해 사용하는 방식을 권장합니다.
 
 ## Learn More
 

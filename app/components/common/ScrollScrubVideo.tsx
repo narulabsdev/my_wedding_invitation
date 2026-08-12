@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { StoryVideo } from "../../content/invitation";
+import { createVideoScrubber } from "../../lib/video-scrubber";
 import { StoryVideoCopy } from "./StoryVideoCopy";
 
 const clamp = (value: number, min = 0, max = 1) =>
@@ -21,30 +22,34 @@ export function ScrollScrubVideo({
   priority = false,
 }: ScrollScrubVideoProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const mediaFrameRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
+    const mediaFrame = mediaFrameRef.current;
     const video = videoRef.current;
-    if (!section || !video) return;
+    const canvas = canvasRef.current;
+    if (!section || !mediaFrame || !video || !canvas) return;
     const sticky = section.querySelector<HTMLElement>(".scrub-video-sticky");
     let cancelled = false;
     let destroyScrollScrub = () => {};
     let refreshScrollScrub = () => {};
     const playhead = { progress: 0 };
+    const videoScrubber = createVideoScrubber({
+      video,
+      canvas,
+      frame: mediaFrame,
+    });
 
     const render = (progress: number) => {
       const copy = section.querySelector<HTMLElement>("[data-story-video-copy]");
       const entrance = clamp(progress / FIRST_DATE_ENTRANCE_END);
       const usesEntranceFade = scene.id === "first-date";
 
-      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
-        const targetTime = progress * Math.max(0, video.duration - 0.04);
-        if (Number.isFinite(targetTime) && Math.abs(video.currentTime - targetTime) > 0.025) {
-          video.currentTime = targetTime;
-        }
-      }
+      videoScrubber.seek(progress);
 
       if (progressRef.current) {
         progressRef.current.style.transform = `scaleX(${progress})`;
@@ -88,7 +93,6 @@ export function ScrollScrubVideo({
       }
     };
 
-    video.pause();
     const setupScrollScrub = async () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         render(scene.id === "home-and-cookie" ? 0.45 : 0.08);
@@ -112,6 +116,10 @@ export function ScrollScrubVideo({
           end: "bottom bottom",
           scrub: 0.45,
           invalidateOnRefresh: true,
+          onRefresh: (trigger) => {
+            playhead.progress = trigger.progress;
+            render(trigger.progress);
+          },
         },
       });
 
@@ -140,6 +148,10 @@ export function ScrollScrubVideo({
             end: "top top",
             scrub: 0.45,
             invalidateOnRefresh: true,
+            onRefresh: (trigger) => {
+              entranceWipe.progress = trigger.progress;
+              renderEntranceWipe(trigger.progress);
+            },
           },
         })
         : null;
@@ -171,6 +183,7 @@ export function ScrollScrubVideo({
       cancelled = true;
       observer.disconnect();
       video.removeEventListener("loadedmetadata", handleMetadata);
+      videoScrubber.destroy();
       destroyScrollScrub();
     };
   }, [scene.id, scene.labels]);
@@ -183,17 +196,30 @@ export function ScrollScrubVideo({
       data-scroll-video={scene.id}
     >
       <div className="scrub-video-sticky">
-        <video
-          ref={videoRef}
-          className="scrub-video-media"
-          src={scene.src}
-          poster={scene.poster}
-          muted
-          playsInline
-          preload={priority ? "auto" : "metadata"}
-          tabIndex={-1}
-          aria-hidden="true"
-        />
+        <div ref={mediaFrameRef} className="scrub-video-frame">
+          <video
+            ref={videoRef}
+            className="scrub-video-media"
+            src={scene.src}
+            poster={scene.poster}
+            muted
+            playsInline
+            preload={priority ? "auto" : "metadata"}
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+          <canvas ref={canvasRef} className="scrub-video-canvas" aria-hidden="true" />
+          {scene.poster ? (
+            // Raw posters are already tiny, exact video frames and must work before hydration.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              className="scrub-video-poster"
+              src={scene.poster}
+              alt=""
+              aria-hidden="true"
+            />
+          ) : null}
+        </div>
         <div className={`scrub-video-shade scrub-video-shade--${scene.id}`} />
         <div className="grain" />
 
