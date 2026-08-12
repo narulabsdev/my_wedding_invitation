@@ -8,6 +8,16 @@ export type StoryVideo = {
   eyebrow: string;
   title: string[];
   detail?: string;
+  labels?: StoryVideoLabel[];
+};
+
+export type StoryVideoLabel = {
+  id: string;
+  text: string;
+  date: string;
+  start: number;
+  end: number;
+  placement: "top-left" | "bottom-left";
 };
 
 export type GalleryMemory = {
@@ -20,12 +30,14 @@ export type GalleryMemory = {
   className: string;
 };
 
-type StoryVideoText = Pick<StoryVideo, "ariaLabel" | "eyebrow" | "title">;
+type StoryVideoText = Pick<StoryVideo, "ariaLabel" | "eyebrow" | "title"> & {
+  labels?: readonly string[];
+};
 type GalleryMemoryText = Pick<GalleryMemory, "title" | "body" | "alt">;
-type Two<T> = readonly [T, T];
+type Four<T> = readonly [T, T, T, T];
 
 type InvitationCopy = {
-  storyVideos: Two<StoryVideoText>;
+  storyVideos: Four<StoryVideoText>;
   gallery: {
     ariaLabel: string;
     heading: string;
@@ -93,9 +105,11 @@ export type InvitationContent = Omit<
   galleryMemories: GalleryMemory[];
 };
 
-const storyVideoAssets: Two<
-  Pick<StoryVideo, "id" | "src" | "poster" | "detail">
-> = [
+type StoryVideoAsset = Pick<StoryVideo, "id" | "src" | "poster" | "detail"> & {
+  labelWindows?: readonly Omit<StoryVideoLabel, "text">[];
+};
+
+const storyVideoAssets: Four<StoryVideoAsset> = [
   {
     id: "vancouver",
     src: "/videos/001-scroll.mp4",
@@ -104,7 +118,40 @@ const storyVideoAssets: Two<
   {
     id: "first-date",
     src: "/videos/002-scroll.mp4",
-    detail: "2022 · 09 · 10",
+    detail: "2022 · 10 · 08",
+  },
+  {
+    id: "home-and-cookie",
+    src: "/videos/003-scroll.mp4",
+    labelWindows: [
+      {
+        id: "moving-in",
+        date: "2023.03.04",
+        start: 0.04,
+        end: 0.26,
+        placement: "top-left",
+      },
+      {
+        id: "cookie-adoption",
+        date: "2023.04.06",
+        start: 0.28,
+        end: 0.72,
+        placement: "bottom-left",
+      },
+    ],
+  },
+  {
+    id: "ring-exchange",
+    src: "/videos/004-scroll.mp4",
+    labelWindows: [
+      {
+        id: "proposal",
+        date: "2024.10.08",
+        start: 0.32,
+        end: 0.76,
+        placement: "top-left",
+      },
+    ],
   },
 ];
 
@@ -246,6 +293,18 @@ const localizedCopy = {
         ariaLabel: "두 사람의 첫 데이트 이야기 영상",
         eyebrow: "",
         title: ["첫 데이트"],
+      },
+      {
+        ariaLabel: "두 사람이 함께 살기 시작하고 쿠키를 가족으로 맞이하는 이야기 영상",
+        eyebrow: "",
+        title: [],
+        labels: ["함께 하기 시작한 날", "쿠키가 가족이 된 날"],
+      },
+      {
+        ariaLabel: "두 사람이 서로에게 반지를 건네는 이야기 영상",
+        eyebrow: "",
+        title: [],
+        labels: ["프러포즈"],
       },
     ],
     gallery: {
@@ -408,6 +467,18 @@ const localizedCopy = {
         ariaLabel: "二人の初めてのデートの物語の映像",
         eyebrow: "",
         title: ["初めてのデート"],
+      },
+      {
+        ariaLabel: "二人が一緒に暮らし始め、クッキーを家族に迎える物語の映像",
+        eyebrow: "",
+        title: [],
+        labels: ["二人で歩み始めた日", "クッキーを家族に迎えた日"],
+      },
+      {
+        ariaLabel: "二人がお互いに指輪を贈る物語の映像",
+        eyebrow: "",
+        title: [],
+        labels: ["プロポーズ"],
       },
     ],
     gallery: {
@@ -574,6 +645,18 @@ const localizedCopy = {
         eyebrow: "",
         title: ["Our first date"],
       },
+      {
+        ariaLabel: "The story of moving in together and welcoming Cookie into our family",
+        eyebrow: "",
+        title: [],
+        labels: ["The day we began our life together", "The day Cookie joined our family"],
+      },
+      {
+        ariaLabel: "The story of exchanging rings with each other",
+        eyebrow: "",
+        title: [],
+        labels: ["The proposal"],
+      },
     ],
     gallery: {
       ariaLabel: "A photo gallery of the couple and their family",
@@ -731,11 +814,23 @@ const localizedCopy = {
 
 const buildContent = (copy: InvitationCopy): InvitationContent => ({
   ...copy,
-  storyVideos: storyVideoAssets.map((asset, index) => ({
-    ...asset,
-    ...copy.storyVideos[index],
-    title: [...copy.storyVideos[index].title],
-  })),
+  storyVideos: storyVideoAssets.map((asset, index) => {
+    const { labelWindows, ...videoAsset } = asset;
+    const { labels: labelCopy, ...videoCopy } = copy.storyVideos[index];
+    const labels = labelWindows
+      ?.map((window, labelIndex) => ({
+        ...window,
+        text: labelCopy?.[labelIndex] ?? "",
+      }))
+      .filter((label) => label.text.length > 0);
+
+    return {
+      ...videoAsset,
+      ...videoCopy,
+      title: [...videoCopy.title],
+      ...(labels?.length ? { labels } : {}),
+    };
+  }),
   galleryMemories: galleryAssets.map((asset, index) => ({
     ...asset,
     ...copy.galleryMemories[index],

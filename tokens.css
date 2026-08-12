@@ -1,0 +1,61 @@
+/* Hallmark · macrostructure: Photographic · tone: luxury · anchor hue: terracotta */
+/* Hallmark · genre: editorial · fingerprint: tight-crop images · double rule · paper crossfade */
+/* Hallmark · pre-emit critique: P5 H4 E5 S5 R5 V4 */
+/* Hallmark · contrast: pass (40–41) · tokens: pass (48) · mobile: pass (34, 49, 50–57) */
+
+:root {
+  --color-gallery-paper: oklch(0.962 0.019 79);
+  --color-gallery-paper-deep: oklch(0.922 0.028 75);
+  --color-gallery-paper-light: oklch(0.982 0.012 82);
+  --color-gallery-ink: oklch(0.298 0.031 47);
+  --color-gallery-ink-muted: oklch(0.47 0.034 45);
+  --color-gallery-terra: oklch(0.433 0.07 43);
+  --color-gallery-terra-light: oklch(0.56 0.085 47);
+  --color-gallery-wood: oklch(0.285 0.052 43);
+  --color-gallery-wood-light: oklch(0.455 0.069 47);
+  --color-gallery-red: oklch(0.465 0.133 27);
+  --color-gallery-blue: oklch(0.392 0.076 242);
+  --color-gallery-gold: oklch(0.69 0.073 83);
+  --color-gallery-on-dark: oklch(0.955 0.019 79);
+  --color-gallery-on-dark-muted: oklch(0.91 0.021 78 / 0.72);
+  --color-gallery-rule: oklch(0.89 0.025 78 / 0.34);
+  --color-gallery-shadow: oklch(0.205 0.033 41 / 0.42);
+  --color-gallery-fiber: oklch(0.34 0.025 52 / 0.07);
+  --color-gallery-light-wash: oklch(0.985 0.012 82 / 0.08);
+  --color-gallery-focus: oklch(0.905 0.072 84);
+  --color-story-video-wash: oklch(0.985 0.012 82 / 0.12);
+  --color-story-progress-track: oklch(0.298 0.031 47 / 0.2);
+
+  --font-display: "AppleMyungjo", "Batang", "Times New Roman", serif;
+  --font-body: var(--font-geist-sans), "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-outlier: var(--font-geist-mono), ui-monospace, monospace;
+
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4.5rem;
+  --space-3xl: 7rem;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5625rem;
+  --text-xl: 1.953rem;
+  --text-2xl: 2.441rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-short: 120ms;
+  --dur-medium: 360ms;
+  --dur-long: 800ms;
+  --rule-hairline: 1px;
+  --rule-frame: 2px;
+  --radius-media: 0.5rem;
+  --radius-mark: 0.125rem;
+}

@@ -175,16 +175,18 @@ export function HorizontalStoryGallery({
                     setActiveIndex(index);
                   }}
                 >
-                  <Image
-                    src={memory.image}
-                    alt={memory.alt}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 480px) 74vw, 355px"
-                    className="memory-image"
-                  />
-                  <span className="memory-index">
-                    {String(index + 1).padStart(2, "0")}
+                  <span className="memory-photo">
+                    <Image
+                      src={memory.image}
+                      alt={memory.alt}
+                      fill
+                      unoptimized
+                      sizes="(max-width: 480px) 74vw, 355px"
+                      className="memory-image"
+                    />
+                    <span className="memory-index">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
                   </span>
                 </button>
               ) : (
@@ -193,9 +195,11 @@ export function HorizontalStoryGallery({
                   data-memory-frame
                   aria-hidden="true"
                 >
-                  <span className="memory-placeholder-mark" />
-                  <span className="memory-index">
-                    {String(index + 1).padStart(2, "0")}
+                  <span className="memory-photo memory-photo--empty">
+                    <span className="memory-placeholder-mark" />
+                    <span className="memory-index">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
                   </span>
                 </div>
               )}
@@ -227,11 +231,19 @@ export function HorizontalStoryGallery({
           aria-labelledby="gallery-invitation-title"
         >
           <div className="gallery-invitation-handoff__surface" aria-hidden="true" />
+          <div className="gallery-invitation-handoff__frame" aria-hidden="true">
+            <span />
+            <span />
+          </div>
           <div className="hanji-mark" aria-hidden="true">
             <span>{invitation.mark[0]}</span>
             <span>{invitation.mark[1]}</span>
           </div>
           <div className="gallery-invitation-handoff__content">
+            <span className="gallery-invitation-handoff__knot" aria-hidden="true">
+              <i />
+              <i />
+            </span>
             <p className="section-number">{invitation.sectionLabel}</p>
             <h2 id="gallery-invitation-title">
               {invitation.title[0]}

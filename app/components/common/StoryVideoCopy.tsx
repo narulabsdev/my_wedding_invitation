@@ -6,6 +6,8 @@ type StoryVideoCopyProps = {
 };
 
 export function StoryVideoCopy({ scene, className }: StoryVideoCopyProps) {
+  if (!scene.eyebrow && scene.title.length === 0 && !scene.detail) return null;
+
   return (
     <div className={className} data-story-video-copy>
       {scene.eyebrow ? <p>{scene.eyebrow}</p> : null}

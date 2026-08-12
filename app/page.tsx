@@ -755,6 +755,10 @@ export default function Home() {
 
       <ScrollScrubVideo scene={storyVideos[1]} priority />
 
+      <ScrollScrubVideo scene={storyVideos[2]} />
+
+      <ScrollScrubVideo scene={storyVideos[3]} />
+
       <HorizontalStoryGallery
         ariaLabel={galleryCopy.ariaLabel}
         heading={galleryCopy.heading}

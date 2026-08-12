@@ -9,6 +9,7 @@ const clamp = (value: number, min = 0, max = 1) =>
 const FIRST_DATE_ENTRANCE_END = 0.035;
 const FIRST_DATE_COPY_FADE_OUT_START = 0.08;
 const FIRST_DATE_COPY_FADE_OUT_END = 0.18;
+const STORY_LABEL_FADE_RANGE = 0.055;
 
 type ScrollScrubVideoProps = {
   scene: StoryVideo;
@@ -36,6 +37,7 @@ export function ScrollScrubVideo({
     const render = (progress: number) => {
       const copy = section.querySelector<HTMLElement>("[data-story-video-copy]");
       const entrance = clamp(progress / FIRST_DATE_ENTRANCE_END);
+      const usesEntranceFade = scene.id === "first-date";
 
       if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
         const targetTime = progress * Math.max(0, video.duration - 0.04);
@@ -63,7 +65,25 @@ export function ScrollScrubVideo({
           : `translate3d(0, ${(0.5 - progress) * 30}px, 0)`;
       }
 
-      if (sticky && scene.id === "first-date") {
+      section
+        .querySelectorAll<HTMLElement>("[data-story-video-label]")
+        .forEach((label, index) => {
+          const labelWindow = scene.labels?.[index];
+          if (!labelWindow) return;
+          const fadeRange = Math.min(
+            STORY_LABEL_FADE_RANGE,
+            (labelWindow.end - labelWindow.start) / 2,
+          );
+          const opacity = Math.min(
+            clamp((progress - labelWindow.start) / fadeRange),
+            clamp((labelWindow.end - progress) / fadeRange),
+          );
+
+          label.style.opacity = String(opacity);
+          label.style.transform = `translate3d(0, ${(1 - opacity) * 18}px, 0)`;
+        });
+
+      if (sticky && usesEntranceFade) {
         sticky.style.opacity = String(entrance);
       }
     };
@@ -71,7 +91,7 @@ export function ScrollScrubVideo({
     video.pause();
     const setupScrollScrub = async () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        render(0.08);
+        render(scene.id === "home-and-cookie" ? 0.45 : 0.08);
         return;
       }
 
@@ -95,12 +115,49 @@ export function ScrollScrubVideo({
         },
       });
 
+      const entranceWipe = { progress: 0 };
+      const renderEntranceWipe = (progress: number) => {
+        const isWiping = progress < 0.999;
+        sticky?.style.setProperty(
+          "transform",
+          isWiping
+            ? `translate3d(0, ${-(1 - progress) * window.innerHeight}px, 0)`
+            : "",
+        );
+        sticky?.style.setProperty(
+          "clip-path",
+          isWiping ? `inset(0 0 ${(1 - progress) * 100}% 0)` : "",
+        );
+      };
+      const entranceTween = scene.id === "home-and-cookie"
+        ? gsap.to(entranceWipe, {
+          progress: 1,
+          ease: "none",
+          onUpdate: () => renderEntranceWipe(entranceWipe.progress),
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "top top",
+            scrub: 0.45,
+            invalidateOnRefresh: true,
+          },
+        })
+        : null;
+
       refreshScrollScrub = () => ScrollTrigger.refresh();
       destroyScrollScrub = () => {
+        entranceTween?.scrollTrigger?.kill();
+        entranceTween?.kill();
         tween.scrollTrigger?.kill();
         tween.kill();
+        sticky?.style.removeProperty("transform");
+        sticky?.style.removeProperty("clip-path");
       };
       ScrollTrigger.refresh();
+      if (entranceTween?.scrollTrigger) {
+        entranceWipe.progress = entranceTween.scrollTrigger.progress;
+        renderEntranceWipe(entranceWipe.progress);
+      }
     };
 
     const handleMetadata = () => render(playhead.progress);
@@ -116,7 +173,7 @@ export function ScrollScrubVideo({
       video.removeEventListener("loadedmetadata", handleMetadata);
       destroyScrollScrub();
     };
-  }, [scene.id]);
+  }, [scene.id, scene.labels]);
 
   return (
     <section
@@ -144,6 +201,25 @@ export function ScrollScrubVideo({
           scene={scene}
           className={`scrub-video-copy scrub-video-copy--${scene.id}`}
         />
+
+        {scene.labels?.length ? (
+          <div
+            className={`scrub-video-labels scrub-video-labels--${scene.id}`}
+            aria-hidden="true"
+          >
+            {scene.labels.map((label) => (
+              <p
+                className="scrub-video-label"
+                data-story-video-label
+                data-placement={label.placement}
+                key={label.id}
+              >
+                <span>{label.text}</span>
+                <small>{label.date}</small>
+              </p>
+            ))}
+          </div>
+        ) : null}
 
         <div className="scrub-video-progress" aria-hidden="true">
           <span ref={progressRef} />
