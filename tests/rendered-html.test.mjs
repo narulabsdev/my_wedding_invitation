@@ -35,18 +35,25 @@ test("renders development preview metadata", async () => {
   const firstVideo = html.indexOf("/videos/001-scroll.mp4");
   const firstDateVideo = html.indexOf("/videos/002-scroll.mp4");
   const gallery = html.indexOf("OUR GALLERY");
-  const secondVideo = html.indexOf("/videos/canada-wedding.mp4");
-  const thirdVideo = html.indexOf("/videos/family-home.mp4");
+  const invitation = html.indexOf('class="gallery-invitation-handoff"');
 
   assert.ok(firstVideo >= 0, "renders the first scroll-scrub video");
   assert.ok(firstDateVideo > firstVideo, "renders the first-date video after video one");
   assert.ok(gallery > firstDateVideo, "renders the horizontal gallery after the first-date video");
-  assert.ok(secondVideo > gallery, "renders video two after the gallery");
-  assert.ok(thirdVideo > secondVideo, "renders video three after video two");
+  assert.ok(invitation > gallery, "renders the invitation message after the gallery");
+  assert.doesNotMatch(html, /\/videos\/(?:canada-wedding|family-home)\.mp4/);
   assert.match(html, /VANCOUVER/);
   assert.match(html, /data-locale="en"/);
   assert.match(html, /Where our story begins/);
   assert.match(html, /Our first date/);
+  assert.match(html, /--gallery-items:20/);
+  assert.equal(
+    (html.match(/class="memory-card[^"]*"/g) ?? []).length,
+    20,
+    "renders all 20 gallery photos",
+  );
+  assert.match(html, /\/images\/gallery\/001_/);
+  assert.match(html, /\/images\/gallery\/018_/);
   assert.doesNotMatch(html, /Our story · Vancouver to Seoul/);
   assert.doesNotMatch(
     html,

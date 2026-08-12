@@ -1030,12 +1030,12 @@ select {
 }
 
 .story-bridge .section-number,
-.invitation-transition .section-number {
+.gallery-invitation-handoff .section-number {
   color: var(--sage);
 }
 
 .story-bridge h2,
-.invitation-transition h2 {
+.gallery-invitation-handoff h2 {
   margin: 0;
   font-family: "AppleMyungjo", "Batang", Georgia, serif;
   font-size: clamp(29px, 4.4vw, 58px);
@@ -1054,7 +1054,7 @@ select {
 .timeline-scroll {
   position: relative;
   z-index: 11;
-  height: 610vh;
+  height: calc((var(--gallery-items, 5) * 65svh) + 340svh);
   margin-top: -140svh;
   background: transparent;
 }
@@ -1085,6 +1085,7 @@ select {
   border-bottom: 1px solid rgb(244 239 230 / 22%);
   font-size: 9px;
   letter-spacing: 0.22em;
+  will-change: opacity;
 }
 
 .timeline-track {
@@ -1095,7 +1096,7 @@ select {
   width: max-content;
   height: 100%;
   align-items: stretch;
-  will-change: transform;
+  will-change: transform, opacity;
 }
 
 .timeline-spacer {
@@ -1390,7 +1391,7 @@ select {
   position: relative;
   z-index: 12;
   height: 720svh;
-  margin-top: -140svh;
+  margin-top: 0;
   background: transparent;
 }
 
@@ -1443,16 +1444,25 @@ select {
   opacity: 0;
 }
 
-.invitation-transition {
-  position: relative;
-  display: flex;
-  min-height: 115vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.gallery-invitation-handoff {
+  --handoff-surface-opacity: 0;
+  --handoff-copy-opacity: 0;
+  --handoff-copy-offset: 24px;
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: grid;
   overflow: hidden;
-  padding: 18vh 24px;
+  color: var(--ink);
   text-align: center;
+  pointer-events: none;
+  place-items: center;
+}
+
+.gallery-invitation-handoff__surface {
+  position: absolute;
+  inset: 0;
+  opacity: var(--handoff-surface-opacity);
   background:
     repeating-radial-gradient(
       circle at 40% 60%,
@@ -1462,9 +1472,26 @@ select {
     ),
     var(--ivory);
   background-size: 6px 6px, auto;
+  will-change: opacity;
 }
 
-.invitation-transition > p:last-child {
+.gallery-invitation-handoff__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 18vh 24px;
+  opacity: var(--handoff-copy-opacity);
+  transform: translate3d(0, var(--handoff-copy-offset), 0);
+  will-change: opacity, transform;
+}
+
+.gallery-invitation-handoff .hanji-mark {
+  z-index: 2;
+  opacity: var(--handoff-copy-opacity);
+  will-change: opacity;
+}
+
+.gallery-invitation-handoff__body {
   margin: 42px 0 0;
   color: var(--color-muted);
   font-family: "AppleMyungjo", "Batang", Georgia, serif;
@@ -1736,18 +1763,18 @@ select {
 }
 
 .mobile-invitation .story-bridge h2,
-.mobile-invitation .invitation-transition h2 {
+.mobile-invitation .gallery-invitation-handoff h2 {
   font-size: 27px;
   line-height: 1.72;
 }
 
 .mobile-invitation .story-bridge h2 br,
-.mobile-invitation .invitation-transition h2 br {
+.mobile-invitation .gallery-invitation-handoff h2 br {
   display: none;
 }
 
 .mobile-invitation .timeline-scroll {
-  height: 560svh;
+  height: calc((var(--gallery-items, 5) * 65svh) + 340svh);
 }
 
 .mobile-invitation .timeline-heading span:last-child {
@@ -1859,18 +1886,18 @@ select {
   }
 
   .story-bridge h2,
-  .invitation-transition h2 {
+  .gallery-invitation-handoff h2 {
     font-size: 27px;
     line-height: 1.72;
   }
 
   .story-bridge h2 br,
-  .invitation-transition h2 br {
+  .gallery-invitation-handoff h2 br {
     display: none;
   }
 
   .timeline-scroll {
-    height: 560vh;
+    height: calc((var(--gallery-items, 5) * 65svh) + 340svh);
   }
 
   .timeline-heading {
@@ -2054,7 +2081,8 @@ select {
     transform: none !important;
   }
 
-  .timeline-scroll {
+  .timeline-scroll,
+  .mobile-invitation .timeline-scroll {
     height: auto;
     margin-top: 0;
   }
@@ -2112,5 +2140,18 @@ select {
   .memory-card {
     width: 100%;
     min-height: 720px;
+  }
+
+  .gallery-invitation-handoff {
+    --handoff-surface-opacity: 1;
+    --handoff-copy-opacity: 1;
+    --handoff-copy-offset: 0px;
+    position: relative;
+    min-height: 115svh;
+    inset: auto;
+  }
+
+  .gallery-invitation-handoff__content {
+    transform: none;
   }
 }

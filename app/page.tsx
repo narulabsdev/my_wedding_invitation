@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-import { CrossfadeVideoSequence } from "./components/common/CrossfadeVideoSequence";
 import { HorizontalStoryGallery } from "./components/common/HorizontalStoryGallery";
 import { ScrollScrubVideo } from "./components/common/ScrollScrubVideo";
 import { getInvitationContent } from "./content/invitation";
@@ -301,7 +300,6 @@ export default function Home() {
     storyVideos,
     gallery: galleryCopy,
     openingVideo: openingVideoCopy,
-    videoSequenceLabel,
     galleryMemories,
     door: doorCopy,
     transition: transitionCopy,
@@ -765,30 +763,8 @@ export default function Home() {
         closePhotoLabel={galleryCopy.closePhotoLabel}
         lightboxLabel={galleryCopy.lightboxLabel}
         items={galleryMemories}
+        invitation={transitionCopy}
       />
-
-      <CrossfadeVideoSequence
-        scenes={storyVideos.slice(2)}
-        ariaLabel={videoSequenceLabel}
-      />
-
-      <section className="invitation-transition">
-        <div className="hanji-mark" aria-hidden="true">
-          <span>{transitionCopy.mark[0]}</span>
-          <span>{transitionCopy.mark[1]}</span>
-        </div>
-        <p className="section-number">{transitionCopy.sectionLabel}</p>
-        <h2>
-          {transitionCopy.title[0]}
-          <br />
-          {transitionCopy.title[1]}
-        </h2>
-        <p>
-          {transitionCopy.body[0]}
-          <br />
-          {transitionCopy.body[1]}
-        </p>
-      </section>
 
       <section className="ceremony">
         <p className="ceremony__label">{ceremonyCopy.label}</p>
