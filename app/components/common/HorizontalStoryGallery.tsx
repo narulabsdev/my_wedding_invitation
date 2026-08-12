@@ -21,6 +21,8 @@ const clamp = (value: number, min = 0, max = 1) =>
 const GALLERY_ENTRANCE_END = 0.035;
 const GALLERY_TRAVEL_END = 0.85;
 const GALLERY_HANDOFF_START = 0.93;
+const GALLERY_FRAME_BASE_OFFSET = 28;
+const GALLERY_FRAME_ZIGZAG_OFFSET = 34;
 
 type HorizontalStoryGalleryProps = {
   ariaLabel: string;
@@ -109,14 +111,18 @@ export function HorizontalStoryGallery({
       }
 
       track.querySelectorAll<HTMLElement>("[data-memory-card]").forEach((card) => {
+        const cardIndex = Number(card.dataset.memoryIndex ?? 0);
         const center = card.offsetLeft - horizontalProgress * maxX + card.offsetWidth / 2;
         const distance = Math.abs(center - viewportWidth / 2);
         const focus = clamp(1 - distance / (viewportWidth * 0.82));
+        const zigzagOffset = cardIndex % 2 === 0
+          ? -GALLERY_FRAME_ZIGZAG_OFFSET
+          : GALLERY_FRAME_ZIGZAG_OFFSET;
         const frameElement = card.querySelector<HTMLElement>("[data-memory-frame]");
         const copy = card.querySelector<HTMLElement>("[data-memory-copy]");
 
         if (frameElement) {
-          frameElement.style.transform = `translate3d(0, ${(1 - focus) * 30}px, 0) rotate(${(0.5 - focus) * 3.2}deg) scale(${0.93 + focus * 0.07})`;
+          frameElement.style.transform = `translate3d(0, ${GALLERY_FRAME_BASE_OFFSET + zigzagOffset + (1 - focus) * 18}px, 0) rotate(${cardIndex % 2 === 0 ? -0.8 : 0.8}deg) scale(${0.94 + focus * 0.06})`;
           frameElement.style.opacity = String(0.36 + focus * 0.64);
         }
         if (copy) {
@@ -161,6 +167,7 @@ export function HorizontalStoryGallery({
             <article
               className={`memory-card ${memory.className}`}
               data-memory-card
+              data-memory-index={index}
               key={`${memory.kicker}-${index}`}
             >
               {memory.image ? (
