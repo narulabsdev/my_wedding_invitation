@@ -14,13 +14,14 @@ export function InvitationLinkBuilder({ copy }: InvitationLinkBuilderProps) {
   const [accessCode, setAccessCode] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [message, setMessage] = useState("");
+  const [autoMode, setAutoMode] = useState(false);
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [status, setStatus] = useState<BuilderStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!recipientName.trim() || !message.trim()) {
+    if (!recipientName.trim()) {
       setStatus("error");
       setErrorMessage(copy.validationError);
       return;
@@ -33,7 +34,12 @@ export function InvitationLinkBuilder({ copy }: InvitationLinkBuilderProps) {
       const response = await fetch("/api/invitations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessCode, recipientName, message }),
+        body: JSON.stringify({
+          accessCode,
+          recipientName,
+          message,
+          defaultMessage: copy.defaultMessage,
+        }),
       });
       if (response.status === 401) {
         setStatus("error");
@@ -45,7 +51,10 @@ export function InvitationLinkBuilder({ copy }: InvitationLinkBuilderProps) {
       const result = await response.json() as { invitationId?: string };
       if (!result.invitationId) throw new Error("Invitation identifier is missing.");
 
-      setGeneratedUrl(buildPersonalizedInvitationUrl(result.invitationId));
+      setGeneratedUrl(buildPersonalizedInvitationUrl(
+        result.invitationId,
+        { autoMode },
+      ));
       setStatus("ready");
     } catch {
       setGeneratedUrl("");
@@ -113,6 +122,23 @@ export function InvitationLinkBuilder({ copy }: InvitationLinkBuilderProps) {
               }}
             />
             <small>{message.length} / 300</small>
+          </label>
+
+          <label className="invite-builder__option">
+            <input
+              name="autoMode"
+              type="checkbox"
+              checked={autoMode}
+              onChange={(event) => {
+                setAutoMode(event.target.checked);
+                setGeneratedUrl("");
+                setStatus("idle");
+              }}
+            />
+            <span>
+              <strong>{copy.autoModeLabel}</strong>
+              <small>{copy.autoModeDescription}</small>
+            </span>
           </label>
 
           <p className="invite-builder__privacy">{copy.privacyNote}</p>

@@ -42,3 +42,17 @@ test("normalizes valid text and rejects missing or oversized content", () => {
     null,
   );
 });
+
+test("uses the localized default message when only a recipient name is entered", () => {
+  assert.deepEqual(
+    normalizeInvitationDraft({
+      recipientName: "김하객",
+      message: "",
+      defaultMessage: "함께 자리해 주시면 더없이 기쁘겠습니다.",
+    }),
+    {
+      recipientName: "김하객",
+      message: "함께 자리해 주시면 더없이 기쁘겠습니다.",
+    },
+  );
+});

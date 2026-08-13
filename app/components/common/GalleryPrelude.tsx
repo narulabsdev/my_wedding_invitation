@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { mapGalleryPreludeOpacity } from "../../lib/gallery-prelude-timing";
+import { AUTO_GALLERY_PRELUDE_DURATION_SECONDS } from "../../lib/auto-scroll-timing";
 import {
   requestScrollFrame,
   subscribeToScrollFrame,
@@ -61,6 +62,7 @@ export function GalleryPrelude({
       className="gallery-prelude"
       aria-label={ariaLabel}
       data-gallery-prelude
+      data-auto-duration-seconds={AUTO_GALLERY_PRELUDE_DURATION_SECONDS}
     >
       <div className="gallery-prelude__sticky">
         <div className="grain" aria-hidden="true" />

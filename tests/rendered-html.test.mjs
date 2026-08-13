@@ -38,6 +38,7 @@ test("renders development preview metadata", async () => {
   const ringExchangeVideo = html.indexOf("/videos/004-scroll.mp4");
   const canadaWeddingVideo = html.indexOf("/videos/005-scroll.mp4");
   const youngjoonBirthVideo = html.indexOf("/videos/006.mp4");
+  const endingVideo = html.indexOf("/videos/007-scroll.mp4");
   const gallery = html.indexOf("OUR GALLERY");
   const galleryPrelude = html.indexOf("From separate lives");
   const invitation = html.indexOf('class="gallery-invitation-handoff"');
@@ -74,18 +75,23 @@ test("renders development preview metadata", async () => {
     "renders the horizontal gallery after Youngjoon's birth video",
   );
   assert.ok(invitation > gallery, "renders the invitation message after the gallery");
+  assert.ok(
+    endingVideo > invitation,
+    "renders the final family video after the invitation details",
+  );
   assert.doesNotMatch(html, /\/videos\/(?:canada-wedding|family-home)\.mp4/);
   const videoTags = html.match(/<video\b[^>]*>/g) ?? [];
-  assert.equal(videoTags.length, 6, "renders all six scroll-scrub videos");
+  assert.equal(videoTags.length, 7, "renders all seven scroll-scrub videos");
   videoTags.forEach((videoTag) => {
     assert.match(
       videoTag,
-      /\bposter="\/images\/video-posters\/00[1-6]\.webp"/,
+      /\bposter="\/images\/video-posters\/00[1-7]\.webp(?:\?[^\"]+)?"/,
       "gives every scrub video a static poster fallback",
     );
     assert.match(videoTag, /\bplaysinline=""/i, "keeps videos inline on mobile");
     assert.doesNotMatch(videoTag, /\bcontrols(?:=|\s|>)/, "does not expose native video controls");
   });
+  assert.match(html, /class="ending-video-label"/);
   assert.match(html, /VANCOUVER/);
   assert.match(html, /data-locale="en"/);
   assert.match(html, /Where our story begins/);
@@ -105,6 +111,7 @@ test("renders development preview metadata", async () => {
   assert.doesNotMatch(html, /Will you join us\?|Send RSVP/);
   assert.match(html, /Lotte World Folk Museum Traditional Wedding Hall/);
   assert.match(html, /3:00 PM/);
+  assert.match(html, /href="\/api\/calendar\?locale=en"/);
   assert.match(html, /Two hours free for wedding guests/);
   assert.match(html, /Please join us/);
   assert.match(html, /for our wedding/);

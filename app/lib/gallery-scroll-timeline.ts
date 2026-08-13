@@ -1,6 +1,13 @@
-const FINAL_CARD_HOLD_VIEWPORTS = 2;
+const FINAL_CARD_HOLD_VIEWPORTS = 1;
 const INVITATION_FADE_VIEWPORTS = 0.8;
 const INVITATION_READ_HOLD_VIEWPORTS = 1.5;
+
+export const GALLERY_ENTRANCE_END = 0.035;
+
+export const resolveGalleryAutoStopY = (
+  galleryStartY: number,
+  galleryScrollRange: number,
+) => galleryStartY + Math.max(0, galleryScrollRange) * GALLERY_ENTRANCE_END;
 
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));

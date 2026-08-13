@@ -11,6 +11,8 @@ type VideoScrubberOptions = {
   canvas: HTMLCanvasElement;
   frame: HTMLElement;
   fit?: VideoFit;
+  contentScale?: number;
+  contentPositionX?: number;
   fps?: number;
   revealInitialFrame?: boolean;
 };
@@ -68,6 +70,8 @@ const drawVideoFrame = (
   video: HTMLVideoElement,
   canvas: HTMLCanvasElement,
   fit: VideoFit,
+  contentScale: number,
+  contentPositionX: number,
 ) => {
   if (
     video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
@@ -91,12 +95,13 @@ const drawVideoFrame = (
   const context = canvas.getContext("2d", { alpha: false });
   if (!context) return false;
 
-  const scale = fit === "contain"
+  const baseScale = fit === "contain"
     ? Math.min(width / video.videoWidth, height / video.videoHeight)
     : Math.max(width / video.videoWidth, height / video.videoHeight);
+  const scale = baseScale * Math.max(0.01, contentScale);
   const drawWidth = video.videoWidth * scale;
   const drawHeight = video.videoHeight * scale;
-  const offsetX = (width - drawWidth) / 2;
+  const offsetX = (width - drawWidth) * clamp(contentPositionX);
   const offsetY = (height - drawHeight) / 2;
 
   context.fillStyle = "#fff";
@@ -110,6 +115,8 @@ export function createVideoScrubber({
   canvas,
   frame,
   fit = "cover",
+  contentScale = 1,
+  contentPositionX = 0.5,
   fps = DEFAULT_SCRUB_FPS,
   revealInitialFrame = false,
 }: VideoScrubberOptions): VideoScrubber {
@@ -136,7 +143,16 @@ export function createVideoScrubber({
 
   const revealCurrentFrame = (wasPresented = false) => {
     hasPresentedFrame ||= wasPresented;
-    if (useCanvas && !drawVideoFrame(video, canvas, fit)) return;
+    if (
+      useCanvas &&
+      !drawVideoFrame(
+        video,
+        canvas,
+        fit,
+        contentScale,
+        contentPositionX,
+      )
+    ) return;
     if (!shouldRevealVideoFrame(
       renderMode,
       hasPresentedFrame,

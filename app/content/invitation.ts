@@ -3,6 +3,7 @@ import type { InvitationLocale } from "../lib/locale";
 export type StoryVideo = {
   id: string;
   src: string;
+  durationSeconds: number;
   poster?: string;
   ariaLabel: string;
   eyebrow: string;
@@ -35,6 +36,16 @@ export type PersonalizedInvitation = {
   message: string;
 };
 
+export type EndingVideo = {
+  src: string;
+  poster: string;
+  durationSeconds: number;
+  ariaLabel: string;
+  label: string;
+  title: readonly [string, string];
+  familyNames: string;
+};
+
 export type InvitationLinkBuilderCopy = {
   eyebrow: string;
   title: string;
@@ -45,6 +56,9 @@ export type InvitationLinkBuilderCopy = {
   namePlaceholder: string;
   messageLabel: string;
   messagePlaceholder: string;
+  defaultMessage: string;
+  autoModeLabel: string;
+  autoModeDescription: string;
   privacyNote: string;
   generateAction: string;
   generatingAction: string;
@@ -78,6 +92,7 @@ type InvitationCopy = {
     ariaLabel: string;
     heading: string;
     hint: string;
+    autoScrollHint: string;
     openPhotoLabel: string;
     closePhotoLabel: string;
     lightboxLabel: string;
@@ -128,6 +143,10 @@ type InvitationCopy = {
     dateTime: string;
     address: string;
     calendarAction: string;
+    calendarEvent: {
+      title: string;
+      description: string;
+    };
     mapAction: string;
     mapDialog: CeremonyMapDialogCopy;
   };
@@ -148,6 +167,7 @@ type InvitationCopy = {
     parkingNotice: string;
   };
   ending: {
+    ariaLabel: string;
     label: string;
     title: readonly [string, string];
     familyNames: string;
@@ -156,13 +176,17 @@ type InvitationCopy = {
 
 export type InvitationContent = Omit<
   InvitationCopy,
-  "storyVideos" | "galleryMemories"
+  "storyVideos" | "galleryMemories" | "ending"
 > & {
   storyVideos: StoryVideo[];
   galleryMemories: GalleryMemory[];
+  ending: EndingVideo;
 };
 
-type StoryVideoAsset = Pick<StoryVideo, "id" | "src" | "poster" | "detail"> & {
+type StoryVideoAsset = Pick<
+  StoryVideo,
+  "id" | "src" | "durationSeconds" | "poster" | "detail"
+> & {
   labelWindows?: readonly Omit<StoryVideoLabel, "text">[];
 };
 
@@ -170,18 +194,21 @@ const storyVideoAssets: Six<StoryVideoAsset> = [
   {
     id: "vancouver",
     src: "/videos/001-scroll.mp4?v=20260812-hq",
+    durationSeconds: 6.583333,
     poster: "/images/video-posters/001.webp",
     detail: "2026 · 11 · 01",
   },
   {
     id: "first-date",
     src: "/videos/002-scroll.mp4?v=20260812-hq",
+    durationSeconds: 6.583333,
     poster: "/images/video-posters/002.webp",
     detail: "2022 · 10 · 08",
   },
   {
     id: "home-and-cookie",
     src: "/videos/003-scroll.mp4?v=20260812-hq",
+    durationSeconds: 8,
     poster: "/images/video-posters/003.webp",
     labelWindows: [
       {
@@ -203,6 +230,7 @@ const storyVideoAssets: Six<StoryVideoAsset> = [
   {
     id: "ring-exchange",
     src: "/videos/004-scroll.mp4?v=20260812-hq",
+    durationSeconds: 10.125,
     poster: "/images/video-posters/004.webp",
     labelWindows: [
       {
@@ -217,6 +245,7 @@ const storyVideoAssets: Six<StoryVideoAsset> = [
   {
     id: "canada-wedding",
     src: "/videos/005-scroll.mp4?v=20260812-hq",
+    durationSeconds: 8.875,
     poster: "/images/video-posters/005.webp",
     labelWindows: [
       {
@@ -231,7 +260,8 @@ const storyVideoAssets: Six<StoryVideoAsset> = [
   {
     id: "youngjoon-birth",
     src: "/videos/006.mp4?v=20260812-hq",
-    poster: "/images/video-posters/006.webp",
+    durationSeconds: 9.416667,
+    poster: "/images/video-posters/006.webp?v=20260813-first-frame",
     labelWindows: [
       {
         id: "youngjoon-birth",
@@ -243,6 +273,12 @@ const storyVideoAssets: Six<StoryVideoAsset> = [
     ],
   },
 ];
+
+const endingVideoAsset = {
+  src: "/videos/007-scroll.mp4?v=20260813-hq",
+  poster: "/images/video-posters/007.webp?v=20260813",
+  durationSeconds: 8,
+} as const;
 
 const galleryAssets: readonly Pick<
   GalleryMemory,
@@ -365,7 +401,7 @@ const galleryAssets: readonly Pick<
   {
     year: "ONE MONTH",
     kicker: "Chapter 20",
-    image: "/images/gallery/gallery-20.jpg",
+    image: "/images/gallery/gallery-20.jpg?v=20260813",
     className: "memory--portrait memory--final",
   },
 ];
@@ -419,6 +455,7 @@ const localizedCopy = {
       ariaLabel: "두 사람과 가족의 사진 갤러리",
       heading: "OUR GALLERY",
       hint: "스크롤로 사진을 넘겨보세요",
+      autoScrollHint: "상하로 스크롤해 주세요",
       openPhotoLabel: "사진 크게 보기",
       closePhotoLabel: "확대 사진 닫기",
       lightboxLabel: "확대 사진",
@@ -554,20 +591,23 @@ const localizedCopy = {
     linkBuilder: {
       eyebrow: "PRIVATE INVITATION LINK",
       title: "맞춤 초대 링크 만들기",
-      description: "초대받는 분의 이름과 전할 문구를 입력하면 짧은 맞춤 초대 링크를 만듭니다.",
+      description: "초대받는 분의 이름을 입력하면 짧은 맞춤 초대 링크를 만듭니다. 문구를 비워 두면 기본 문구가 사용됩니다.",
       accessCodeLabel: "관리자 접근 코드",
       accessCodePlaceholder: "초대 생성용 접근 코드를 입력해 주세요",
       nameLabel: "초대받는 분",
       namePlaceholder: "예: 김하객",
-      messageLabel: "초대 문구",
+      messageLabel: "초대 문구 (선택)",
       messagePlaceholder: "함께 자리해 주시면 더없이 기쁘겠습니다.",
+      defaultMessage: "함께 자리해 주시면 더없이 기쁘겠습니다.",
+      autoModeLabel: "자동 재생 링크로 만들기",
+      autoModeDescription: "전통문부터 갤러리 첫 사진까지 자동으로 진행됩니다.",
       privacyNote: "이름과 문구는 비공개 초대 목록에 저장되며 URL에는 짧은 초대 ID만 표시됩니다. 링크는 초대할 분에게만 전달해 주세요.",
       generateAction: "초대 링크 생성",
       generatingAction: "링크를 만들고 있습니다",
       resultLabel: "생성된 초대 링크",
       copyAction: "링크 복사",
       copiedAction: "복사 완료",
-      validationError: "이름과 초대 문구를 모두 입력해 주세요.",
+      validationError: "초대받는 분의 이름을 입력해 주세요.",
       accessError: "관리자 접근 코드가 올바르지 않습니다.",
       requestError: "링크를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.",
     },
@@ -581,6 +621,10 @@ const localizedCopy = {
       dateTime: "2026년 11월 1일 일요일 · 오후 3시",
       address: "서울 송파구 올림픽로 240 (잠실동 40-1)",
       calendarAction: "달력에 저장",
+      calendarEvent: {
+        title: "상호 · 스테프 결혼식",
+        description: "저희 두 사람의 혼례에 귀한 걸음 해주세요.",
+      },
       mapAction: "지도 보기",
       mapDialog: {
         ariaLabel: "지도 앱 선택",
@@ -625,6 +669,7 @@ const localizedCopy = {
       parkingNotice: "롯데월드타워 전망대(서울스카이) 주차장은 이용 불가",
     },
     ending: {
+      ariaLabel: "한복을 입은 가족과 쿠키가 전하는 마지막 감사 인사 영상",
       label: "THANK YOU",
       title: ["우리의 이야기를", "함께해 주셔서 감사합니다."],
       familyNames: "Sang Ho · Steph · Youngjoon",
@@ -671,6 +716,7 @@ const localizedCopy = {
       ariaLabel: "二人と家族のフォトギャラリー",
       heading: "OUR GALLERY",
       hint: "スクロールして写真をご覧ください",
+      autoScrollHint: "上下にスクロールしてください",
       openPhotoLabel: "写真を拡大表示",
       closePhotoLabel: "拡大写真を閉じる",
       lightboxLabel: "拡大写真",
@@ -806,20 +852,23 @@ const localizedCopy = {
     linkBuilder: {
       eyebrow: "PRIVATE INVITATION LINK",
       title: "個別招待リンクを作成",
-      description: "お名前とメッセージを入力すると、短い個別招待リンクを作成します。",
+      description: "お名前を入力すると、短い個別招待リンクを作成します。メッセージを空欄にすると既定の文面を使用します。",
       accessCodeLabel: "管理者アクセスコード",
       accessCodePlaceholder: "招待作成用のアクセスコードを入力してください",
       nameLabel: "ご招待する方",
       namePlaceholder: "例：山田 花子",
-      messageLabel: "招待メッセージ",
+      messageLabel: "招待メッセージ（任意）",
       messagePlaceholder: "ご一緒いただけましたら幸いです。",
+      defaultMessage: "ご一緒いただけましたら幸いです。",
+      autoModeLabel: "自動再生リンクにする",
+      autoModeDescription: "伝統門からギャラリーの最初の写真まで自動で進みます。",
       privacyNote: "お名前とメッセージは非公開の招待リストに保存され、URLには短い招待IDのみが表示されます。リンクはご本人だけにお送りください。",
       generateAction: "招待リンクを作成",
       generatingAction: "リンクを作成しています",
       resultLabel: "作成された招待リンク",
       copyAction: "リンクをコピー",
       copiedAction: "コピーしました",
-      validationError: "お名前と招待メッセージを入力してください。",
+      validationError: "ご招待する方のお名前を入力してください。",
       accessError: "管理者アクセスコードが正しくありません。",
       requestError: "リンクを作成できませんでした。しばらくしてからお試しください。",
     },
@@ -833,6 +882,10 @@ const localizedCopy = {
       dateTime: "2026年11月1日（日）· 午後3時",
       address: "韓国 ソウル市 松坡区 オリンピック路240（蚕室洞40-1）",
       calendarAction: "カレンダーに保存",
+      calendarEvent: {
+        title: "サンホ · ステフ 結婚式",
+        description: "私たち二人の結婚式へ、ぜひお越しください。",
+      },
       mapAction: "地図を見る",
       mapDialog: {
         ariaLabel: "地図アプリを選択",
@@ -877,6 +930,7 @@ const localizedCopy = {
       parkingNotice: "ロッテワールドタワー展望台（ソウルスカイ）駐車場は利用不可",
     },
     ending: {
+      ariaLabel: "韓服姿の家族とクッキーが感謝を伝える最後の映像",
       label: "THANK YOU",
       title: ["私たちの物語を", "見守ってくださりありがとうございます。"],
       familyNames: "Sang Ho · Steph · Youngjoon",
@@ -923,6 +977,7 @@ const localizedCopy = {
       ariaLabel: "A photo gallery of the couple and their family",
       heading: "OUR GALLERY",
       hint: "Scroll to explore our photos",
+      autoScrollHint: "Scroll up or down",
       openPhotoLabel: "Open photo",
       closePhotoLabel: "Close enlarged photo",
       lightboxLabel: "Enlarged photo",
@@ -1055,20 +1110,23 @@ const localizedCopy = {
     linkBuilder: {
       eyebrow: "PRIVATE INVITATION LINK",
       title: "Create a personal invitation link",
-      description: "Enter a guest name and message to create a short personal invitation link.",
+      description: "Enter a guest name to create a short personal invitation link. Leave the message blank to use the default invitation text.",
       accessCodeLabel: "Administrator access code",
       accessCodePlaceholder: "Enter the invitation-builder access code",
       nameLabel: "Guest name",
       namePlaceholder: "Example: Alex Kim",
-      messageLabel: "Invitation message",
+      messageLabel: "Invitation message (optional)",
       messagePlaceholder: "We would be delighted to celebrate together with you.",
+      defaultMessage: "We would be delighted to celebrate together with you.",
+      autoModeLabel: "Create an auto-play link",
+      autoModeDescription: "The story advances automatically from the traditional doors to the first gallery photo.",
       privacyNote: "The name and message are stored in a private invitation list, while the URL shows only a short invitation ID. Share each link only with its intended guest.",
       generateAction: "Create invitation link",
       generatingAction: "Creating link",
       resultLabel: "Generated invitation link",
       copyAction: "Copy link",
       copiedAction: "Copied",
-      validationError: "Enter both the guest name and invitation message.",
+      validationError: "Enter the guest name.",
       accessError: "The administrator access code is incorrect.",
       requestError: "The link could not be created. Please try again shortly.",
     },
@@ -1082,6 +1140,10 @@ const localizedCopy = {
       dateTime: "Sunday, November 1, 2026 · 3:00 PM",
       address: "240 Olympic-ro, Songpa-gu, Seoul (Jamsil-dong 40-1)",
       calendarAction: "Save to calendar",
+      calendarEvent: {
+        title: "Sang Ho & Steph's Wedding",
+        description: "Please join us for our wedding in Seoul.",
+      },
       mapAction: "View map",
       mapDialog: {
         ariaLabel: "Choose a map service",
@@ -1126,6 +1188,7 @@ const localizedCopy = {
       parkingNotice: "The Seoul Sky observatory parking lot in Lotte World Tower cannot be used",
     },
     ending: {
+      ariaLabel: "A final thank-you video from the family in hanbok and Cookie",
       label: "THANK YOU",
       title: ["Thank you for being", "part of our story."],
       familyNames: "Sang Ho · Steph · Youngjoon",
@@ -1135,6 +1198,10 @@ const localizedCopy = {
 
 const buildContent = (copy: InvitationCopy): InvitationContent => ({
   ...copy,
+  ending: {
+    ...copy.ending,
+    ...endingVideoAsset,
+  },
   storyVideos: storyVideoAssets.map((asset, index) => {
     const { labelWindows, ...videoAsset } = asset;
     const { labels: labelCopy, ...videoCopy } = copy.storyVideos[index];

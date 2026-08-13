@@ -31,7 +31,7 @@ export const normalizeInvitationDraft = (
 
   const input = value as Record<string, unknown>;
   const recipientName = normalizeText(input.recipientName);
-  const message = normalizeText(input.message);
+  const message = normalizeText(input.message) || normalizeText(input.defaultMessage);
 
   if (
     recipientName.length === 0 ||

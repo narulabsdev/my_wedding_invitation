@@ -3,6 +3,8 @@ const clamp = (value: number, min = 0, max = 1) =>
 
 export const OPENING_VIDEO_START = 0.34;
 export const OPENING_VIDEO_END = 0.9;
+export const OPENING_AUTO_INTRO_SECONDS = 2.5;
+export const OPENING_AUTO_EXIT_SECONDS = 1;
 
 export const mapOpeningVideoGuideOpacity = (pageProgress: number) => {
   const fadeIn = clamp((pageProgress - 0.145) / 0.025);
@@ -31,6 +33,29 @@ export const mapOpeningVideoCopyOpacity = (videoProgress: number) => {
 
 const INTRO_SCROLL_SHARE = 0.34;
 const INTRO_VIDEO_SHARE = 0.17;
+
+export const resolveOpeningAutoPageProgressPerSecond = (
+  pageProgress: number,
+  videoDurationSeconds: number,
+) => {
+  const safeDuration = Math.max(0.1, videoDurationSeconds);
+  const videoScrollRange = OPENING_VIDEO_END - OPENING_VIDEO_START;
+  const introScrollEnd =
+    OPENING_VIDEO_START + videoScrollRange * INTRO_SCROLL_SHARE;
+
+  if (pageProgress < OPENING_VIDEO_START) {
+    return OPENING_VIDEO_START / OPENING_AUTO_INTRO_SECONDS;
+  }
+  if (pageProgress < introScrollEnd) {
+    return videoScrollRange * INTRO_SCROLL_SHARE /
+      (safeDuration * INTRO_VIDEO_SHARE);
+  }
+  if (pageProgress < OPENING_VIDEO_END) {
+    return videoScrollRange * (1 - INTRO_SCROLL_SHARE) /
+      (safeDuration * (1 - INTRO_VIDEO_SHARE));
+  }
+  return (1 - OPENING_VIDEO_END) / OPENING_AUTO_EXIT_SECONDS;
+};
 
 export const mapOpeningVideoProgress = (pageProgress: number) => {
   const progress = clamp(

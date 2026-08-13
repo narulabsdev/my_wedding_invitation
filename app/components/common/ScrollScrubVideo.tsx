@@ -37,6 +37,7 @@ export function ScrollScrubVideo({
     const canvas = canvasRef.current;
     if (!section || !mediaFrame || !video || !canvas) return;
     const sticky = section.querySelector<HTMLElement>(".scrub-video-sticky");
+    const autoMode = section.closest<HTMLElement>("[data-auto-mode=\"true\"]") !== null;
     let cancelled = false;
     let destroyScrollScrub = () => {};
     let refreshScrollScrub = () => {};
@@ -117,7 +118,7 @@ export function ScrollScrubVideo({
           trigger: section,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.45,
+          scrub: autoMode ? true : 0.45,
           invalidateOnRefresh: true,
           onRefresh: (trigger) => {
             playhead.progress = trigger.progress;
@@ -149,7 +150,7 @@ export function ScrollScrubVideo({
             trigger: section,
             start: "top bottom",
             end: "top top",
-            scrub: 0.45,
+            scrub: autoMode ? true : 0.45,
             invalidateOnRefresh: true,
             onRefresh: (trigger) => {
               entranceWipe.progress = trigger.progress;
@@ -197,6 +198,7 @@ export function ScrollScrubVideo({
       className={`scrub-video-scroll scrub-video-scroll--${scene.id}`}
       aria-label={scene.ariaLabel}
       data-scroll-video={scene.id}
+      data-auto-duration-seconds={scene.durationSeconds}
     >
       <div
         className={`scrub-video-sticky${

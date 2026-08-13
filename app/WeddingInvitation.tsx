@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AutoScrollToGallery } from "./components/common/AutoScrollToGallery";
+import { CalendarSaveButton } from "./components/common/CalendarSaveButton";
+import { EndingScrollVideo } from "./components/common/EndingScrollVideo";
 import { HorizontalStoryGallery } from "./components/common/HorizontalStoryGallery";
 import { GalleryPrelude } from "./components/common/GalleryPrelude";
 import { InvitationSeal, invitationSealSrc } from "./components/common/InvitationSeal";
@@ -695,12 +697,18 @@ export function WeddingInvitation({ autoMode = false }: WeddingInvitationProps) 
       data-locale={locale}
       data-auto-mode={autoMode ? "true" : undefined}
     >
-      <AutoScrollToGallery enabled={autoMode} ready={isReady} />
+      <AutoScrollToGallery
+        enabled={autoMode}
+        ready={isReady}
+        hint={galleryCopy.autoScrollHint}
+      />
       <section
         ref={doorRef}
         className="door-scroll"
         aria-label={doorCopy.ariaLabel}
         data-scroll-video={storyVideos[0].id}
+        data-auto-duration-seconds={storyVideos[0].durationSeconds}
+        data-auto-scroll-kind="opening-video"
       >
         <div
           className={`door-sticky ${isReady ? "is-ready" : "is-loading"}`}
@@ -831,11 +839,7 @@ export function WeddingInvitation({ autoMode = false }: WeddingInvitationProps) 
               ) : (
                 <>
                   {doorCopy.loadingPrompt}
-                  <span className="loading-dots" aria-hidden="true">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
+                  <span className="loading-spinner" aria-hidden="true" />
                 </>
               )}
             </p>
@@ -896,7 +900,10 @@ export function WeddingInvitation({ autoMode = false }: WeddingInvitationProps) 
         <p>{ceremonyCopy.dateTime}</p>
         <p className="ceremony__address">{ceremonyCopy.address}</p>
         <div className="ceremony__actions">
-          <button type="button">{ceremonyCopy.calendarAction}</button>
+          <CalendarSaveButton
+            label={ceremonyCopy.calendarAction}
+            locale={locale}
+          />
           <MapChooser
             actionLabel={ceremonyCopy.mapAction}
             copy={ceremonyCopy.mapDialog}
@@ -937,18 +944,7 @@ export function WeddingInvitation({ autoMode = false }: WeddingInvitationProps) 
         </article>
       </section>
 
-      <footer className="ending">
-        <div className="ending-shade" />
-        <div className="ending-copy">
-          <p>{endingCopy.label}</p>
-          <h2>
-            {endingCopy.title[0]}
-            <br />
-            {endingCopy.title[1]}
-          </h2>
-          <span>{endingCopy.familyNames}</span>
-        </div>
-      </footer>
+      <EndingScrollVideo scene={endingCopy} />
     </main>
   );
 }

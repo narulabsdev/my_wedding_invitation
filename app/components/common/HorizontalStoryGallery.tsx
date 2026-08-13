@@ -9,7 +9,10 @@ import {
   useState,
 } from "react";
 import type { GalleryMemory } from "../../content/invitation";
-import { resolveGalleryScrollTimeline } from "../../lib/gallery-scroll-timeline";
+import {
+  GALLERY_ENTRANCE_END,
+  resolveGalleryScrollTimeline,
+} from "../../lib/gallery-scroll-timeline";
 import {
   requestScrollFrame,
   subscribeToScrollFrame,
@@ -21,7 +24,6 @@ import { InvitationSeal } from "./InvitationSeal";
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
 
-const GALLERY_ENTRANCE_END = 0.035;
 const GALLERY_FRAME_BASE_OFFSET = 28;
 const GALLERY_FRAME_ZIGZAG_OFFSET = 34;
 
@@ -253,7 +255,7 @@ export function HorizontalStoryGallery({
 
         <article
           ref={handoffRef}
-          className="gallery-invitation-handoff"
+          className={`gallery-invitation-handoff${personalizedInvitation ? " is-personalized" : ""}`}
           aria-labelledby="gallery-invitation-title"
         >
           <div className="gallery-invitation-handoff__surface" aria-hidden="true" />

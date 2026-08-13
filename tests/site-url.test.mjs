@@ -12,4 +12,8 @@ test("always creates invitation links on the custom wedding domain", () => {
     buildPersonalizedInvitationUrl("opaque-token"),
     "https://our-wedding.narulabs.ca/#i=opaque-token",
   );
+  assert.equal(
+    buildPersonalizedInvitationUrl("opaque-token", { autoMode: true }),
+    "https://our-wedding.narulabs.ca/auto#i=opaque-token",
+  );
 });

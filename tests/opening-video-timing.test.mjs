@@ -7,6 +7,7 @@ import {
   mapOpeningVideoCopyOpacity,
   mapOpeningVideoGuideOpacity,
   mapOpeningVideoProgress,
+  resolveOpeningAutoPageProgressPerSecond,
 } from "../app/lib/opening-video-timing.ts";
 
 test("starts the opening video after the scroll-guide hold", () => {
@@ -37,4 +38,23 @@ test("slows the opening video intro and finishes before the white cover", () => 
 
   assert.ok(mapOpeningVideoProgress(pageProgress) < scrollProgress);
   assert.equal(mapOpeningVideoProgress(OPENING_VIDEO_END), 1);
+});
+
+test("advances the automatic opening at the source video rate", () => {
+  const durationSeconds = 6.583333;
+  const expectedVideoProgressPerSecond = 1 / durationSeconds;
+
+  [0.34, 0.6].forEach((pageProgress) => {
+    const nextPageProgress = pageProgress +
+      resolveOpeningAutoPageProgressPerSecond(
+        pageProgress,
+        durationSeconds,
+      );
+    const actualVideoProgress = mapOpeningVideoProgress(nextPageProgress) -
+      mapOpeningVideoProgress(pageProgress);
+
+    assert.ok(
+      Math.abs(actualVideoProgress - expectedVideoProgressPerSecond) < 0.001,
+    );
+  });
 });

@@ -3,6 +3,25 @@ import test from "node:test";
 
 import { getInvitationContent } from "../app/content/invitation.ts";
 
+test("records each source video duration for automatic playback", () => {
+  assert.deepEqual(
+    getInvitationContent("ko").storyVideos.map((video) => video.durationSeconds),
+    [6.583333, 6.583333, 8, 10.125, 8.875, 9.416667],
+  );
+});
+
+test("uses the final family thank-you video as the ending", () => {
+  const ending = getInvitationContent("ko").ending;
+
+  assert.equal(ending.src, "/videos/007-scroll.mp4?v=20260813-hq");
+  assert.equal(ending.poster, "/images/video-posters/007.webp?v=20260813");
+  assert.equal(ending.durationSeconds, 8);
+  assert.deepEqual(ending.title, [
+    "우리의 이야기를",
+    "함께해 주셔서 감사합니다.",
+  ]);
+});
+
 test("places the Canada wedding label in the lower-right corner", () => {
   const content = getInvitationContent("ko");
   const scene = content.storyVideos.find((video) => video.id === "canada-wedding");
@@ -18,6 +37,10 @@ test("places Youngjoon's birth video after the Canadian wedding", () => {
 
   assert.equal(birthIndex, weddingIndex + 1);
   assert.equal(birth.src, "/videos/006.mp4?v=20260812-hq");
+  assert.equal(
+    birth.poster,
+    "/images/video-posters/006.webp?v=20260813-first-frame",
+  );
   assert.equal(birth.labels?.[0]?.text, "영준이 출산");
   assert.equal(birth.labels?.[0]?.date, "2026.07.10 4:58");
   assert.equal(birth.labels?.[0]?.placement, "top-left");
@@ -37,6 +60,7 @@ test("introduces the gallery with a localized family-story message", () => {
     "서로 다른 두 사람이",
     "한 가족이 되기까지",
   ]);
+  assert.equal(content.gallery.autoScrollHint, "상하로 스크롤해 주세요");
   assert.equal(
     content.galleryPrelude.body,
     "함께 쌓아온 소중한 순간들을 사진에 담았습니다.",
@@ -118,4 +142,20 @@ test("describes short private invitation links in every locale", () => {
   assert.match(getInvitationContent("ko").linkBuilder.privacyNote, /초대 ID/);
   assert.match(getInvitationContent("ja").linkBuilder.description, /短い/);
   assert.match(getInvitationContent("en").linkBuilder.description, /short/);
+  assert.equal(
+    getInvitationContent("ko").linkBuilder.defaultMessage,
+    "함께 자리해 주시면 더없이 기쁘겠습니다.",
+  );
+  assert.match(
+    getInvitationContent("ko").linkBuilder.autoModeLabel,
+    /자동 재생/,
+  );
+  assert.match(
+    getInvitationContent("ja").linkBuilder.autoModeLabel,
+    /自動再生/,
+  );
+  assert.match(
+    getInvitationContent("en").linkBuilder.autoModeLabel,
+    /auto-play/,
+  );
 });
