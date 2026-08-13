@@ -12,6 +12,7 @@ type VideoScrubberOptions = {
   frame: HTMLElement;
   fit?: VideoFit;
   fps?: number;
+  revealInitialFrame?: boolean;
 };
 
 export type VideoScrubber = {
@@ -26,15 +27,17 @@ export const isKakaoInAppBrowser = (userAgent: string) =>
   /KAKAOTALK|KAKAOSTORY/i.test(userAgent);
 
 export const shouldUseCanvasVideoFrames = (userAgent: string) =>
-  isKakaoInAppBrowser(userAgent) && /Android/i.test(userAgent);
+  isKakaoInAppBrowser(userAgent);
 
 export const shouldRevealVideoFrame = (
   renderMode: VideoRenderMode,
   hasPresentedFrame: boolean,
   currentTime: number,
   fps = DEFAULT_SCRUB_FPS,
-) => currentTime >= 0.5 / fps && (
-  renderMode === "canvas" || hasPresentedFrame
+  revealInitialFrame = false,
+) => revealInitialFrame || (
+  currentTime >= 0.5 / fps &&
+  (renderMode === "canvas" || hasPresentedFrame)
 );
 
 export const chooseCanvasPlaybackAction = (
@@ -55,6 +58,11 @@ export const quantizeVideoTime = (
   const frameDuration = 1 / fps;
   return clamp(Math.round(time / frameDuration) * frameDuration, 0, safeDuration);
 };
+
+export const resolveDesiredVideoTime = (
+  progress: number,
+  duration: number,
+) => clamp(progress) * Math.max(0, duration - 0.04);
 
 const drawVideoFrame = (
   video: HTMLVideoElement,
@@ -103,12 +111,13 @@ export function createVideoScrubber({
   frame,
   fit = "cover",
   fps = DEFAULT_SCRUB_FPS,
+  revealInitialFrame = false,
 }: VideoScrubberOptions): VideoScrubber {
   const frameDuration = 1 / fps;
   const minimumSeekInterval = 1000 / fps;
   const useCanvas = shouldUseCanvasVideoFrames(navigator.userAgent);
   const renderMode: VideoRenderMode = useCanvas ? "canvas" : "video";
-  let desiredTime = 0;
+  let desiredProgress = 0;
   let lastSeekAt = Number.NEGATIVE_INFINITY;
   let animationFrame = 0;
   let presentedFrameCallback = 0;
@@ -128,7 +137,13 @@ export function createVideoScrubber({
   const revealCurrentFrame = (wasPresented = false) => {
     hasPresentedFrame ||= wasPresented;
     if (useCanvas && !drawVideoFrame(video, canvas, fit)) return;
-    if (!shouldRevealVideoFrame(renderMode, hasPresentedFrame, video.currentTime, fps)) {
+    if (!shouldRevealVideoFrame(
+      renderMode,
+      hasPresentedFrame,
+      video.currentTime,
+      fps,
+      revealInitialFrame,
+    )) {
       return;
     }
     frame.dataset.scrubReady = "true";
@@ -202,6 +217,10 @@ export function createVideoScrubber({
       return;
     }
 
+    const desiredTime = resolveDesiredVideoTime(
+      desiredProgress,
+      video.duration,
+    );
     const targetTime = quantizeVideoTime(desiredTime, video.duration, fps);
     const timeDelta = targetTime - video.currentTime;
 
@@ -228,7 +247,7 @@ export function createVideoScrubber({
   };
 
   const handleLoadedData = () => {
-    if (useCanvas) revealCurrentFrame();
+    if (useCanvas || revealInitialFrame) revealCurrentFrame();
     requestPresentedFrame();
     schedule();
   };
@@ -237,15 +256,35 @@ export function createVideoScrubber({
     schedule();
   };
   const handleSeeked = () => {
-    if (typeof video.requestVideoFrameCallback !== "function") {
+    if (useCanvas || typeof video.requestVideoFrameCallback !== "function") {
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => revealCurrentFrame(true));
       });
     }
     requestPresentedFrame();
+    const desiredTime = resolveDesiredVideoTime(
+      desiredProgress,
+      video.duration,
+    );
     if (Math.abs(video.currentTime - desiredTime) >= frameDuration * 0.5) {
       schedule();
     }
+  };
+  const handleEnded = () => {
+    if (
+      destroyed ||
+      video.readyState < HTMLMediaElement.HAVE_METADATA ||
+      !Number.isFinite(video.duration)
+    ) {
+      return;
+    }
+
+    video.pause();
+    const desiredTime = resolveDesiredVideoTime(
+      desiredProgress,
+      video.duration,
+    );
+    seekToTarget(quantizeVideoTime(desiredTime, video.duration, fps));
   };
   const handleResize = () => {
     if (useCanvas && frame.dataset.scrubReady === "true") {
@@ -256,6 +295,7 @@ export function createVideoScrubber({
   video.addEventListener("loadeddata", handleLoadedData);
   video.addEventListener("loadedmetadata", handleMetadata);
   video.addEventListener("seeked", handleSeeked);
+  video.addEventListener("ended", handleEnded);
   const resizeObserver = new ResizeObserver(handleResize);
   resizeObserver.observe(frame);
   requestPresentedFrame();
@@ -266,12 +306,7 @@ export function createVideoScrubber({
 
   return {
     seek(progress) {
-      if (
-        video.readyState >= HTMLMediaElement.HAVE_METADATA &&
-        Number.isFinite(video.duration)
-      ) {
-        desiredTime = clamp(progress) * Math.max(0, video.duration - 0.04);
-      }
+      desiredProgress = clamp(progress);
       schedule();
     },
     destroy() {
@@ -281,6 +316,7 @@ export function createVideoScrubber({
       video.removeEventListener("loadeddata", handleLoadedData);
       video.removeEventListener("loadedmetadata", handleMetadata);
       video.removeEventListener("seeked", handleSeeked);
+      video.removeEventListener("ended", handleEnded);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
       if (presentedFrameCallback) {
         video.cancelVideoFrameCallback(presentedFrameCallback);

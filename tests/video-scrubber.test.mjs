@@ -5,21 +5,27 @@ import {
   chooseCanvasPlaybackAction,
   isKakaoInAppBrowser,
   quantizeVideoTime,
+  resolveDesiredVideoTime,
   shouldRevealVideoFrame,
   shouldUseCanvasVideoFrames,
 } from "../app/lib/video-scrubber.ts";
 import { hasPassedDoorOpening } from "../app/lib/door-visibility.ts";
+
+test("preserves scroll progress until delayed video metadata is available", () => {
+  assert.equal(resolveDesiredVideoTime(0.5, 9.417), 4.6885);
+  assert.equal(resolveDesiredVideoTime(1.5, 9.417), 9.377);
+});
 
 const androidKakao =
   "Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 Mobile Safari/537.36 KAKAOTALK";
 const iosKakao =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 KAKAOTALK";
 
-test("uses canvas only for Android Kakao browsers", () => {
+test("uses canvas for Android and iOS Kakao browsers", () => {
   assert.equal(isKakaoInAppBrowser(androidKakao), true);
   assert.equal(isKakaoInAppBrowser(iosKakao), true);
   assert.equal(shouldUseCanvasVideoFrames(androidKakao), true);
-  assert.equal(shouldUseCanvasVideoFrames(iosKakao), false);
+  assert.equal(shouldUseCanvasVideoFrames(iosKakao), true);
 });
 
 test("quantizes seek targets to the source frame rate", () => {
@@ -34,6 +40,7 @@ test("keeps the white placeholder until a non-zero frame is presented", () => {
   assert.equal(shouldRevealVideoFrame("video", true, 1 / 24), true);
   assert.equal(shouldRevealVideoFrame("canvas", false, 0), false);
   assert.equal(shouldRevealVideoFrame("canvas", false, 1 / 24), true);
+  assert.equal(shouldRevealVideoFrame("canvas", false, 0, 24, true), true);
 });
 
 test("uses continuous playback for nearby forward canvas progress", () => {

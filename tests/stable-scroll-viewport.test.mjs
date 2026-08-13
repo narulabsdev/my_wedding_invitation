@@ -12,9 +12,10 @@ const androidKakao =
 const iosKakao =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 Mobile KAKAOTALK";
 
-test("stabilizes only Android Kakao app viewports", () => {
+test("stabilizes Android and iOS Kakao app viewports", () => {
   assert.equal(shouldStabilizeKakaoViewport(androidKakao), true);
-  assert.equal(shouldStabilizeKakaoViewport(iosKakao), false);
+  assert.equal(shouldStabilizeKakaoViewport(iosKakao), true);
+  assert.equal(shouldStabilizeKakaoViewport("Mozilla/5.0 Mobile Safari"), false);
 });
 
 test("keeps the scroll viewport stable for height-only toolbar changes", () => {

@@ -37,7 +37,9 @@ test("renders development preview metadata", async () => {
   const homeAndCookieVideo = html.indexOf("/videos/003-scroll.mp4");
   const ringExchangeVideo = html.indexOf("/videos/004-scroll.mp4");
   const canadaWeddingVideo = html.indexOf("/videos/005-scroll.mp4");
+  const youngjoonBirthVideo = html.indexOf("/videos/006.mp4");
   const gallery = html.indexOf("OUR GALLERY");
+  const galleryPrelude = html.indexOf("From separate lives");
   const invitation = html.indexOf('class="gallery-invitation-handoff"');
 
   assert.ok(firstVideo >= 0, "renders the first scroll-scrub video");
@@ -55,17 +57,30 @@ test("renders development preview metadata", async () => {
     "renders the Canada wedding video after the ring-exchange video",
   );
   assert.ok(
-    gallery > canadaWeddingVideo,
-    "renders the horizontal gallery after the Canada wedding video",
+    youngjoonBirthVideo > canadaWeddingVideo,
+    "renders Youngjoon's birth video after the Canada wedding video",
+  );
+  assert.match(
+    html,
+    /class="scrub-video-sticky scrub-video-sticky--deferred"/,
+    "keeps the birth video hidden until its scroll transition begins",
+  );
+  assert.ok(
+    galleryPrelude > youngjoonBirthVideo && gallery > galleryPrelude,
+    "renders the gallery prelude after Youngjoon's birth video and before the gallery",
+  );
+  assert.ok(
+    gallery > youngjoonBirthVideo,
+    "renders the horizontal gallery after Youngjoon's birth video",
   );
   assert.ok(invitation > gallery, "renders the invitation message after the gallery");
   assert.doesNotMatch(html, /\/videos\/(?:canada-wedding|family-home)\.mp4/);
   const videoTags = html.match(/<video\b[^>]*>/g) ?? [];
-  assert.equal(videoTags.length, 5, "renders all five scroll-scrub videos");
+  assert.equal(videoTags.length, 6, "renders all six scroll-scrub videos");
   videoTags.forEach((videoTag) => {
     assert.match(
       videoTag,
-      /\bposter="\/images\/video-posters\/00[1-5]\.webp"/,
+      /\bposter="\/images\/video-posters\/00[1-6]\.webp"/,
       "gives every scrub video a static poster fallback",
     );
     assert.match(videoTag, /\bplaysinline=""/i, "keeps videos inline on mobile");
@@ -84,7 +99,20 @@ test("renders development preview metadata", async () => {
   assert.match(html, /2024\.10\.08/);
   assert.match(html, /Our Canadian wedding/);
   assert.match(html, /2025\.05\.05/);
+  assert.match(html, /Youngjoon&#x27;s birth/);
+  assert.match(html, /2026\.07\.10 4:58/);
+  assert.doesNotMatch(html, />RSVP</);
+  assert.doesNotMatch(html, /Will you join us\?|Send RSVP/);
+  assert.match(html, /Lotte World Folk Museum Traditional Wedding Hall/);
+  assert.match(html, /3:00 PM/);
+  assert.match(html, /Two hours free for wedding guests/);
+  assert.match(html, /Please join us/);
+  assert.match(html, /for our wedding/);
   assert.match(html, /--gallery-items:20/);
+  assert.ok(
+    (html.match(/sangho-steph-square-tassel\.png/g) ?? []).length >= 2,
+    "uses the selected seal on the door and invitation handoff",
+  );
   assert.equal(
     (html.match(/class="memory-card[^"]*"/g) ?? []).length,
     20,

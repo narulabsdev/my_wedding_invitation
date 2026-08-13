@@ -125,3 +125,13 @@ public/wedding/seals/
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+
+## Invitation Builder Access Code
+
+맞춤 초대 링크 생성 화면의 관리자 코드는 macOS 터미널에서 다음 명령으로 확인합니다.
+
+```bash
+security find-generic-password \
+  -s "our-wedding.narulabs.ca invitation builder" \
+  -w
+```

@@ -26,8 +26,8 @@
   --color-story-video-wash: oklch(0.985 0.012 82 / 0.12);
   --color-story-progress-track: oklch(0.298 0.031 47 / 0.2);
 
-  --font-display: "AppleMyungjo", "Batang", "Times New Roman", serif;
-  --font-body: var(--font-geist-sans), "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-display: "Gowun Batang", "AppleMyungjo", "Batang", serif;
+  --font-body: "Noto Sans KR Variable", "Apple SD Gothic Neo", sans-serif;
   --font-outlier: var(--font-geist-mono), ui-monospace, monospace;
 
   --space-3xs: 0.25rem;

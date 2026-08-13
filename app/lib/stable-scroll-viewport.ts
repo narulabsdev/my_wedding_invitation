@@ -7,7 +7,7 @@ const WIDTH_CHANGE_THRESHOLD = 1;
 const STABLE_VIEWPORT_PROPERTY = "--stable-scroll-vh";
 
 export const shouldStabilizeKakaoViewport = (userAgent: string) =>
-  /KAKAOTALK|KAKAOSTORY/i.test(userAgent) && /Android/i.test(userAgent);
+  /KAKAOTALK|KAKAOSTORY/i.test(userAgent);
 
 export const resolveStableViewport = (
   current: ViewportSize,
@@ -23,6 +23,14 @@ const readViewport = (): ViewportSize => ({
   width: window.visualViewport?.width ?? window.innerWidth,
   height: window.visualViewport?.height ?? window.innerHeight,
 });
+
+export const readStableScrollViewportHeight = () => {
+  const stableUnit = Number.parseFloat(
+    document.documentElement.style.getPropertyValue(STABLE_VIEWPORT_PROPERTY),
+  );
+  if (Number.isFinite(stableUnit) && stableUnit > 0) return stableUnit * 100;
+  return window.visualViewport?.height ?? window.innerHeight;
+};
 
 export const installStableKakaoScrollViewport = () => {
   if (!shouldStabilizeKakaoViewport(navigator.userAgent)) return () => {};

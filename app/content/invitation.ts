@@ -17,7 +17,7 @@ export type StoryVideoLabel = {
   date: string;
   start: number;
   end: number;
-  placement: "top-left" | "bottom-left";
+  placement: "top-left" | "bottom-left" | "bottom-right";
 };
 
 export type GalleryMemory = {
@@ -30,14 +30,50 @@ export type GalleryMemory = {
   className: string;
 };
 
+export type PersonalizedInvitation = {
+  recipientName: string;
+  message: string;
+};
+
+export type InvitationLinkBuilderCopy = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  accessCodeLabel: string;
+  accessCodePlaceholder: string;
+  nameLabel: string;
+  namePlaceholder: string;
+  messageLabel: string;
+  messagePlaceholder: string;
+  privacyNote: string;
+  generateAction: string;
+  generatingAction: string;
+  resultLabel: string;
+  copyAction: string;
+  copiedAction: string;
+  validationError: string;
+  accessError: string;
+  requestError: string;
+};
+
+export type CeremonyMapDialogCopy = {
+  ariaLabel: string;
+  title: string;
+  description: string;
+  closeLabel: string;
+  venue: string;
+  address: string;
+  options: readonly { label: string; url: string; iconSrc: string }[];
+};
+
 type StoryVideoText = Pick<StoryVideo, "ariaLabel" | "eyebrow" | "title"> & {
   labels?: readonly string[];
 };
 type GalleryMemoryText = Pick<GalleryMemory, "title" | "body" | "alt">;
-type Five<T> = readonly [T, T, T, T, T];
+type Six<T> = readonly [T, T, T, T, T, T];
 
 type InvitationCopy = {
-  storyVideos: Five<StoryVideoText>;
+  storyVideos: Six<StoryVideoText>;
   gallery: {
     ariaLabel: string;
     heading: string;
@@ -46,28 +82,42 @@ type InvitationCopy = {
     closePhotoLabel: string;
     lightboxLabel: string;
   };
+  galleryPrelude: {
+    ariaLabel: string;
+    eyebrow: string;
+    title: readonly [string, string];
+    body: string;
+  };
   openingVideo: {
     eyebrow: string;
     title: string;
+    scrollGuide: string;
   };
   galleryMemories: readonly GalleryMemoryText[];
   door: {
     ariaLabel: string;
     coupleNames: string;
-    invitationTitle: string;
+    invitationLines: readonly [string, string];
+    personalizedInvitationLines: (
+      recipientName: string,
+    ) => readonly [string, string, string];
     invitationDate: string;
     readyAriaLabel: string;
     loadingAriaLabel: (progress: number) => string;
     readyPrompt: string;
     readyPromptEyebrow: string;
+    autoReadyAriaLabel: string;
+    autoReadyPrompt: string;
+    autoReadyPromptEyebrow: string;
     loadingPrompt: string;
   };
   transition: {
-    mark: readonly [string, string];
     sectionLabel: string;
     title: readonly [string, string];
     body: readonly [string, string];
+    personalizedGreeting: (name: string) => string;
   };
+  linkBuilder: InvitationLinkBuilderCopy;
   ceremony: {
     label: string;
     month: string;
@@ -79,16 +129,23 @@ type InvitationCopy = {
     address: string;
     calendarAction: string;
     mapAction: string;
+    mapDialog: CeremonyMapDialogCopy;
   };
   details: {
     locationLabel: string;
     locationTitle: string;
-    locationBody: readonly [string, string];
-    transportAction: string;
-    rsvpLabel: string;
-    rsvpTitle: string;
-    rsvpBody: readonly [string, string];
-    rsvpAction: string;
+    venue: string;
+    phoneLabel: string;
+    phone: string;
+    addressLabel: string;
+    address: string;
+    subwayLabel: string;
+    subwayBody: string;
+    busLabel: string;
+    busBody: string;
+    parkingLabel: string;
+    parkingBody: string;
+    parkingNotice: string;
   };
   ending: {
     label: string;
@@ -109,29 +166,29 @@ type StoryVideoAsset = Pick<StoryVideo, "id" | "src" | "poster" | "detail"> & {
   labelWindows?: readonly Omit<StoryVideoLabel, "text">[];
 };
 
-const storyVideoAssets: Five<StoryVideoAsset> = [
+const storyVideoAssets: Six<StoryVideoAsset> = [
   {
     id: "vancouver",
-    src: "/videos/001-scroll.mp4",
+    src: "/videos/001-scroll.mp4?v=20260812-hq",
     poster: "/images/video-posters/001.webp",
     detail: "2026 · 11 · 01",
   },
   {
     id: "first-date",
-    src: "/videos/002-scroll.mp4",
+    src: "/videos/002-scroll.mp4?v=20260812-hq",
     poster: "/images/video-posters/002.webp",
     detail: "2022 · 10 · 08",
   },
   {
     id: "home-and-cookie",
-    src: "/videos/003-scroll.mp4",
+    src: "/videos/003-scroll.mp4?v=20260812-hq",
     poster: "/images/video-posters/003.webp",
     labelWindows: [
       {
         id: "moving-in",
         date: "2023.03.04",
         start: 0.04,
-        end: 0.26,
+        end: 0.38,
         placement: "top-left",
       },
       {
@@ -145,7 +202,7 @@ const storyVideoAssets: Five<StoryVideoAsset> = [
   },
   {
     id: "ring-exchange",
-    src: "/videos/004-scroll.mp4",
+    src: "/videos/004-scroll.mp4?v=20260812-hq",
     poster: "/images/video-posters/004.webp",
     labelWindows: [
       {
@@ -159,7 +216,7 @@ const storyVideoAssets: Five<StoryVideoAsset> = [
   },
   {
     id: "canada-wedding",
-    src: "/videos/005-scroll.mp4",
+    src: "/videos/005-scroll.mp4?v=20260812-hq",
     poster: "/images/video-posters/005.webp",
     labelWindows: [
       {
@@ -167,6 +224,20 @@ const storyVideoAssets: Five<StoryVideoAsset> = [
         date: "2025.05.05",
         start: 0.2,
         end: 0.78,
+        placement: "bottom-right",
+      },
+    ],
+  },
+  {
+    id: "youngjoon-birth",
+    src: "/videos/006.mp4?v=20260812-hq",
+    poster: "/images/video-posters/006.webp",
+    labelWindows: [
+      {
+        id: "youngjoon-birth",
+        date: "2026.07.10 4:58",
+        start: 0.18,
+        end: 0.82,
         placement: "top-left",
       },
     ],
@@ -299,6 +370,13 @@ const galleryAssets: readonly Pick<
   },
 ];
 
+const NAVER_MAP_ICON_SRC =
+  "https://play-lh.googleusercontent.com/FZCOcEqapjBkvBmv2RkIMlJ1mteGJh8eq4239jAm-4QgpzvCa9sBj4msNlUBsWvf3hX69-fJoTnFZR2pFdZdwxY=w160-h160";
+const KAKAO_MAP_ICON_SRC =
+  "https://play-lh.googleusercontent.com/X_lsQWulxVVAZlmOHW3NiffVwXh7yNVUQrAMv_mk1k6IBN5lYynxKGH4urz-DeOHQQnOlEID9NJg0fBCP7uqww=w160-h160";
+const GOOGLE_MAPS_ICON_SRC =
+  "https://play-lh.googleusercontent.com/B8pdO_2K5nBsF0g1h6dKwV_jQFLP-XombGDEQGtJT-mw1EUKCKJpa9lBGCF4rP_MwCsozSXyvI3z19g9R3J4=w160-h160";
+
 const localizedCopy = {
   ko: {
     storyVideos: [
@@ -330,6 +408,12 @@ const localizedCopy = {
         title: [],
         labels: ["캐나다 결혼"],
       },
+      {
+        ariaLabel: "영준이가 태어난 날의 가족 이야기 영상",
+        eyebrow: "",
+        title: [],
+        labels: ["영준이 출산"],
+      },
     ],
     gallery: {
       ariaLabel: "두 사람과 가족의 사진 갤러리",
@@ -339,9 +423,16 @@ const localizedCopy = {
       closePhotoLabel: "확대 사진 닫기",
       lightboxLabel: "확대 사진",
     },
+    galleryPrelude: {
+      ariaLabel: "사진으로 이어지는 두 사람과 가족의 이야기",
+      eyebrow: "OUR MOMENTS",
+      title: ["서로 다른 두 사람이", "한 가족이 되기까지"],
+      body: "함께 쌓아온 소중한 순간들을 사진에 담았습니다.",
+    },
     openingVideo: {
       eyebrow: "VANCOUVER",
       title: "우리의 이야기가 시작되는 곳",
+      scrollGuide: "아래로 천천히 스크롤하면 영상이 재생됩니다.",
     },
     galleryMemories: [
       {
@@ -428,17 +519,27 @@ const localizedCopy = {
     door: {
       ariaLabel: "전통 창호문을 열고 이야기 안으로 들어가기",
       coupleNames: "상호 · 스테프",
-      invitationTitle: "혼례에 초대합니다",
+      invitationLines: [
+        "저희 두 사람의 혼례에",
+        "귀한 걸음 해주세요",
+      ],
+      personalizedInvitationLines: (recipientName) => [
+        `${recipientName}님을`,
+        "저희 두 사람의 혼례에",
+        "정중히 초대합니다",
+      ],
       invitationDate: "2026년 11월 1일",
       readyAriaLabel: "준비가 완료되었습니다. 아래로 스크롤하여 문을 열어주세요.",
       loadingAriaLabel: (progress) =>
         `청첩장을 준비하고 있습니다. ${progress}퍼센트`,
       readyPrompt: "아래로 내려 문을 열어주세요",
       readyPromptEyebrow: "SCROLL TO OPEN",
+      autoReadyAriaLabel: "준비가 완료되어 이야기가 자동으로 시작됩니다.",
+      autoReadyPrompt: "잠시 후 이야기가 자동으로 시작됩니다",
+      autoReadyPromptEyebrow: "AUTO PLAY",
       loadingPrompt: "이야기를 준비하고 있습니다",
     },
     transition: {
-      mark: ["상", "스"],
       sectionLabel: "02 · INVITATION",
       title: [
         "이제 한국의 소중한 분들 앞에서",
@@ -448,31 +549,80 @@ const localizedCopy = {
         "함께 자리하시어 새로운 시작을",
         "따뜻한 마음으로 축복해 주세요.",
       ],
+      personalizedGreeting: (name) => `${name}님께`,
+    },
+    linkBuilder: {
+      eyebrow: "PRIVATE INVITATION LINK",
+      title: "맞춤 초대 링크 만들기",
+      description: "초대받는 분의 이름과 전할 문구를 입력하면 짧은 맞춤 초대 링크를 만듭니다.",
+      accessCodeLabel: "관리자 접근 코드",
+      accessCodePlaceholder: "초대 생성용 접근 코드를 입력해 주세요",
+      nameLabel: "초대받는 분",
+      namePlaceholder: "예: 김하객",
+      messageLabel: "초대 문구",
+      messagePlaceholder: "함께 자리해 주시면 더없이 기쁘겠습니다.",
+      privacyNote: "이름과 문구는 비공개 초대 목록에 저장되며 URL에는 짧은 초대 ID만 표시됩니다. 링크는 초대할 분에게만 전달해 주세요.",
+      generateAction: "초대 링크 생성",
+      generatingAction: "링크를 만들고 있습니다",
+      resultLabel: "생성된 초대 링크",
+      copyAction: "링크 복사",
+      copiedAction: "복사 완료",
+      validationError: "이름과 초대 문구를 모두 입력해 주세요.",
+      accessError: "관리자 접근 코드가 올바르지 않습니다.",
+      requestError: "링크를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.",
     },
     ceremony: {
-      label: "THE CEREMONY",
-      month: "NOVEMBER",
-      weekday: "SUN",
-      day: "01",
-      year: "2026",
-      venue: "롯데월드 전통혼례장",
-      dateTime: "2026년 11월 1일 일요일 · 오후 12시",
-      address: "서울특별시 송파구 올림픽로 240",
+      label: "예식 안내",
+      month: "11월",
+      weekday: "일요일",
+      day: "1",
+      year: "2026년",
+      venue: "롯데월드 민속박물관 전통혼례장",
+      dateTime: "2026년 11월 1일 일요일 · 오후 3시",
+      address: "서울 송파구 올림픽로 240 (잠실동 40-1)",
       calendarAction: "달력에 저장",
       mapAction: "지도 보기",
+      mapDialog: {
+        ariaLabel: "지도 앱 선택",
+        title: "어떤 지도로 열까요?",
+        description: "편한 지도 앱을 선택해 주세요.",
+        closeLabel: "지도 선택 닫기",
+        venue: "롯데월드 민속박물관 전통혼례장",
+        address: "서울 송파구 올림픽로 240 (잠실동 40-1)",
+        options: [
+          {
+            label: "네이버지도",
+            url: "https://naver.me/Gxkehh7q",
+            iconSrc: NAVER_MAP_ICON_SRC,
+          },
+          {
+            label: "카카오맵",
+            url: "https://place.map.kakao.com/1687324400",
+            iconSrc: KAKAO_MAP_ICON_SRC,
+          },
+          {
+            label: "구글 지도",
+            url: "https://maps.app.goo.gl/KLohU1Q2w2ok1Lp8A",
+            iconSrc: GOOGLE_MAPS_ICON_SRC,
+          },
+        ],
+      },
     },
     details: {
       locationLabel: "LOCATION",
       locationTitle: "오시는 길",
-      locationBody: ["지하철 2호선·8호선 잠실역", "롯데월드 전통혼례장"],
-      transportAction: "교통 안내 확인",
-      rsvpLabel: "RSVP",
-      rsvpTitle: "참석 여부",
-      rsvpBody: [
-        "귀한 걸음 준비에 참고할 수 있도록",
-        "참석 여부를 알려주세요.",
-      ],
-      rsvpAction: "참석 여부 전달",
+      venue: "롯데월드 민속박물관 전통혼례장",
+      phoneLabel: "전화",
+      phone: "02-411-3703",
+      addressLabel: "주소",
+      address: "서울 송파구 올림픽로 240 (잠실동 40-1)",
+      subwayLabel: "지하철",
+      subwayBody: "2호선·8호선 잠실역 4번 출구 → 롯데월드 정문 → 전용 엘리베이터 3층",
+      busLabel: "버스",
+      busBody: "잠실역 롯데월드 정류장 하차 → 롯데월드 정문 → 전용 엘리베이터 3층",
+      parkingLabel: "무료 주차",
+      parkingBody: "하객은 2시간 무료주차 · 롯데월드 단지 전체 주차장 이용 가능",
+      parkingNotice: "롯데월드타워 전망대(서울스카이) 주차장은 이용 불가",
     },
     ending: {
       label: "THANK YOU",
@@ -510,6 +660,12 @@ const localizedCopy = {
         title: [],
         labels: ["カナダでの結婚式"],
       },
+      {
+        ariaLabel: "ヨンジュンが生まれた日の家族の映像",
+        eyebrow: "",
+        title: [],
+        labels: ["ヨンジュンの誕生"],
+      },
     ],
     gallery: {
       ariaLabel: "二人と家族のフォトギャラリー",
@@ -519,9 +675,16 @@ const localizedCopy = {
       closePhotoLabel: "拡大写真を閉じる",
       lightboxLabel: "拡大写真",
     },
+    galleryPrelude: {
+      ariaLabel: "写真で続く二人と家族の物語",
+      eyebrow: "OUR MOMENTS",
+      title: ["別々だった二人が", "ひとつの家族になるまで"],
+      body: "共に重ねてきた大切な瞬間を写真に残しました。",
+    },
     openingVideo: {
       eyebrow: "VANCOUVER",
       title: "私たちの物語が始まる場所",
+      scrollGuide: "下へゆっくりスクロールすると映像が再生されます。",
     },
     galleryMemories: [
       {
@@ -608,17 +771,27 @@ const localizedCopy = {
     door: {
       ariaLabel: "韓国の伝統的な扉を開き、物語の中へ進む",
       coupleNames: "Sang Ho · Steph",
-      invitationTitle: "私たちの結婚式へご招待します",
+      invitationLines: [
+        "私たち二人の結婚式へ",
+        "ぜひお越しください",
+      ],
+      personalizedInvitationLines: (recipientName) => [
+        `${recipientName}様を`,
+        "私たち二人の結婚式へ",
+        "心よりご招待いたします",
+      ],
       invitationDate: "2026年11月1日",
       readyAriaLabel: "準備ができました。下にスクロールして扉を開いてください。",
       loadingAriaLabel: (progress) =>
         `招待状を準備しています。${progress}パーセント`,
       readyPrompt: "下にスクロールして扉を開いてください",
       readyPromptEyebrow: "SCROLL TO OPEN",
+      autoReadyAriaLabel: "準備ができました。物語は自動で始まります。",
+      autoReadyPrompt: "まもなく物語が自動で始まります",
+      autoReadyPromptEyebrow: "AUTO PLAY",
       loadingPrompt: "物語を準備しています",
     },
     transition: {
-      mark: ["サ", "ス"],
       sectionLabel: "02 · INVITATION",
       title: [
         "韓国の大切な皆さまの前で",
@@ -628,6 +801,27 @@ const localizedCopy = {
         "新しい門出を共に見守り",
         "温かい祝福をいただければ幸いです。",
       ],
+      personalizedGreeting: (name) => `${name} 様へ`,
+    },
+    linkBuilder: {
+      eyebrow: "PRIVATE INVITATION LINK",
+      title: "個別招待リンクを作成",
+      description: "お名前とメッセージを入力すると、短い個別招待リンクを作成します。",
+      accessCodeLabel: "管理者アクセスコード",
+      accessCodePlaceholder: "招待作成用のアクセスコードを入力してください",
+      nameLabel: "ご招待する方",
+      namePlaceholder: "例：山田 花子",
+      messageLabel: "招待メッセージ",
+      messagePlaceholder: "ご一緒いただけましたら幸いです。",
+      privacyNote: "お名前とメッセージは非公開の招待リストに保存され、URLには短い招待IDのみが表示されます。リンクはご本人だけにお送りください。",
+      generateAction: "招待リンクを作成",
+      generatingAction: "リンクを作成しています",
+      resultLabel: "作成された招待リンク",
+      copyAction: "リンクをコピー",
+      copiedAction: "コピーしました",
+      validationError: "お名前と招待メッセージを入力してください。",
+      accessError: "管理者アクセスコードが正しくありません。",
+      requestError: "リンクを作成できませんでした。しばらくしてからお試しください。",
     },
     ceremony: {
       label: "THE CEREMONY",
@@ -635,27 +829,52 @@ const localizedCopy = {
       weekday: "SUN",
       day: "01",
       year: "2026",
-      venue: "ロッテワールド伝統婚礼場",
-      dateTime: "2026年11月1日（日）· 正午12時",
-      address: "韓国 ソウル特別市 松坡区 オリンピック路240",
+      venue: "ロッテワールド民俗博物館 伝統婚礼場",
+      dateTime: "2026年11月1日（日）· 午後3時",
+      address: "韓国 ソウル市 松坡区 オリンピック路240（蚕室洞40-1）",
       calendarAction: "カレンダーに保存",
       mapAction: "地図を見る",
+      mapDialog: {
+        ariaLabel: "地図アプリを選択",
+        title: "地図アプリを選択してください",
+        description: "使いやすい地図アプリで会場をご確認ください。",
+        closeLabel: "地図選択を閉じる",
+        venue: "ロッテワールド民俗博物館 伝統婚礼場",
+        address: "韓国 ソウル市 松坡区 オリンピック路240（蚕室洞40-1）",
+        options: [
+          {
+            label: "NAVERマップ",
+            url: "https://naver.me/Gxkehh7q",
+            iconSrc: NAVER_MAP_ICON_SRC,
+          },
+          {
+            label: "カカオマップ",
+            url: "https://place.map.kakao.com/1687324400",
+            iconSrc: KAKAO_MAP_ICON_SRC,
+          },
+          {
+            label: "Google マップ",
+            url: "https://maps.app.goo.gl/KLohU1Q2w2ok1Lp8A",
+            iconSrc: GOOGLE_MAPS_ICON_SRC,
+          },
+        ],
+      },
     },
     details: {
       locationLabel: "LOCATION",
       locationTitle: "アクセス",
-      locationBody: [
-        "地下鉄2号線・8号線 チャムシル駅",
-        "ロッテワールド伝統婚礼場",
-      ],
-      transportAction: "交通案内を見る",
-      rsvpLabel: "RSVP",
-      rsvpTitle: "出欠のご連絡",
-      rsvpBody: [
-        "当日の準備の参考にさせていただくため",
-        "ご出欠をお知らせください。",
-      ],
-      rsvpAction: "出欠を連絡する",
+      venue: "ロッテワールド民俗博物館 伝統婚礼場",
+      phoneLabel: "電話",
+      phone: "02-411-3703",
+      addressLabel: "住所",
+      address: "韓国 ソウル市 松坡区 オリンピック路240（蚕室洞40-1）",
+      subwayLabel: "地下鉄",
+      subwayBody: "2号線・8号線 蚕室駅4番出口 → ロッテワールド正門 → 専用エレベーター3階",
+      busLabel: "バス",
+      busBody: "蚕室駅ロッテワールド停留所 → ロッテワールド正門 → 専用エレベーター3階",
+      parkingLabel: "無料駐車",
+      parkingBody: "ご参列者は2時間無料 · ロッテワールド敷地内の駐車場を利用可能",
+      parkingNotice: "ロッテワールドタワー展望台（ソウルスカイ）駐車場は利用不可",
     },
     ending: {
       label: "THANK YOU",
@@ -693,6 +912,12 @@ const localizedCopy = {
         title: [],
         labels: ["Our Canadian wedding"],
       },
+      {
+        ariaLabel: "Our family story from the day Youngjoon was born",
+        eyebrow: "",
+        title: [],
+        labels: ["Youngjoon's birth"],
+      },
     ],
     gallery: {
       ariaLabel: "A photo gallery of the couple and their family",
@@ -702,9 +927,16 @@ const localizedCopy = {
       closePhotoLabel: "Close enlarged photo",
       lightboxLabel: "Enlarged photo",
     },
+    galleryPrelude: {
+      ariaLabel: "The family story continues through photographs",
+      eyebrow: "OUR MOMENTS",
+      title: ["From separate lives", "to one family"],
+      body: "A few treasured moments from the life we have built together.",
+    },
     openingVideo: {
       eyebrow: "VANCOUVER",
       title: "Where our story begins",
+      scrollGuide: "Scroll down slowly to play the video.",
     },
     galleryMemories: [
       {
@@ -791,17 +1023,24 @@ const localizedCopy = {
     door: {
       ariaLabel: "Open the traditional Korean doors and enter our story",
       coupleNames: "Sang Ho · Steph",
-      invitationTitle: "You're invited to our wedding",
+      invitationLines: ["Please join us", "for our wedding"],
+      personalizedInvitationLines: (recipientName) => [
+        `${recipientName},`,
+        "we warmly invite you",
+        "to our wedding",
+      ],
       invitationDate: "November 1, 2026",
       readyAriaLabel: "The invitation is ready. Scroll down to open the doors.",
       loadingAriaLabel: (progress) =>
         `Preparing the invitation. ${progress} percent`,
       readyPrompt: "Scroll down to open the doors",
       readyPromptEyebrow: "SCROLL TO OPEN",
+      autoReadyAriaLabel: "The invitation is ready and the story will begin automatically.",
+      autoReadyPrompt: "The story will begin automatically",
+      autoReadyPromptEyebrow: "AUTO PLAY",
       loadingPrompt: "Preparing our story",
     },
     transition: {
-      mark: ["S", "S"],
       sectionLabel: "02 · INVITATION",
       title: [
         "Before our loved ones in Korea,",
@@ -811,6 +1050,27 @@ const localizedCopy = {
         "Please join us as we begin this new chapter",
         "and celebrate with your warmest wishes.",
       ],
+      personalizedGreeting: (name) => `For ${name}`,
+    },
+    linkBuilder: {
+      eyebrow: "PRIVATE INVITATION LINK",
+      title: "Create a personal invitation link",
+      description: "Enter a guest name and message to create a short personal invitation link.",
+      accessCodeLabel: "Administrator access code",
+      accessCodePlaceholder: "Enter the invitation-builder access code",
+      nameLabel: "Guest name",
+      namePlaceholder: "Example: Alex Kim",
+      messageLabel: "Invitation message",
+      messagePlaceholder: "We would be delighted to celebrate together with you.",
+      privacyNote: "The name and message are stored in a private invitation list, while the URL shows only a short invitation ID. Share each link only with its intended guest.",
+      generateAction: "Create invitation link",
+      generatingAction: "Creating link",
+      resultLabel: "Generated invitation link",
+      copyAction: "Copy link",
+      copiedAction: "Copied",
+      validationError: "Enter both the guest name and invitation message.",
+      accessError: "The administrator access code is incorrect.",
+      requestError: "The link could not be created. Please try again shortly.",
     },
     ceremony: {
       label: "THE CEREMONY",
@@ -818,27 +1078,52 @@ const localizedCopy = {
       weekday: "SUN",
       day: "01",
       year: "2026",
-      venue: "Lotte World Traditional Wedding Hall",
-      dateTime: "Sunday, November 1, 2026 · 12:00 PM",
-      address: "240 Olympic-ro, Songpa-gu, Seoul, South Korea",
+      venue: "Lotte World Folk Museum Traditional Wedding Hall",
+      dateTime: "Sunday, November 1, 2026 · 3:00 PM",
+      address: "240 Olympic-ro, Songpa-gu, Seoul (Jamsil-dong 40-1)",
       calendarAction: "Save to calendar",
       mapAction: "View map",
+      mapDialog: {
+        ariaLabel: "Choose a map service",
+        title: "Choose a map service",
+        description: "Open the venue in your preferred Korean map service.",
+        closeLabel: "Close map choices",
+        venue: "Lotte World Folk Museum Traditional Wedding Hall",
+        address: "240 Olympic-ro, Songpa-gu, Seoul (Jamsil-dong 40-1)",
+        options: [
+          {
+            label: "NAVER Map",
+            url: "https://naver.me/Gxkehh7q",
+            iconSrc: NAVER_MAP_ICON_SRC,
+          },
+          {
+            label: "KakaoMap",
+            url: "https://place.map.kakao.com/1687324400",
+            iconSrc: KAKAO_MAP_ICON_SRC,
+          },
+          {
+            label: "Google Maps",
+            url: "https://maps.app.goo.gl/KLohU1Q2w2ok1Lp8A",
+            iconSrc: GOOGLE_MAPS_ICON_SRC,
+          },
+        ],
+      },
     },
     details: {
       locationLabel: "LOCATION",
       locationTitle: "Getting here",
-      locationBody: [
-        "Jamsil Station · Subway Lines 2 and 8",
-        "Lotte World Traditional Wedding Hall",
-      ],
-      transportAction: "View travel information",
-      rsvpLabel: "RSVP",
-      rsvpTitle: "Will you join us?",
-      rsvpBody: [
-        "To help us prepare for your visit,",
-        "please let us know if you can attend.",
-      ],
-      rsvpAction: "Send RSVP",
+      venue: "Lotte World Folk Museum Traditional Wedding Hall",
+      phoneLabel: "Phone",
+      phone: "02-411-3703",
+      addressLabel: "Address",
+      address: "240 Olympic-ro, Songpa-gu, Seoul (Jamsil-dong 40-1)",
+      subwayLabel: "Subway",
+      subwayBody: "Jamsil Station, Lines 2 and 8 · Exit 4 → Lotte World main gate → dedicated elevator to Level 3",
+      busLabel: "Bus",
+      busBody: "Get off at Jamsil Station Lotte World → main gate → dedicated elevator to Level 3",
+      parkingLabel: "Complimentary parking",
+      parkingBody: "Two hours free for wedding guests · all Lotte World complex parking lots are available",
+      parkingNotice: "The Seoul Sky observatory parking lot in Lotte World Tower cannot be used",
     },
     ending: {
       label: "THANK YOU",

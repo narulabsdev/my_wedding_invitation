@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { GalleryMemory } from "../../content/invitation";
+import { isPointInsideContainedImage } from "../../lib/gallery-lightbox-geometry";
 
 type GalleryLightboxProps = {
   item: GalleryMemory;
@@ -19,6 +20,7 @@ export function GalleryLightbox({
   onClose,
 }: GalleryLightboxProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -44,8 +46,19 @@ export function GalleryLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={`${dialogLabel}: ${item.alt}`}
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
+      onClick={(event) => {
+        const target = event.target as Element;
+        if (target.closest(".gallery-lightbox__close")) return;
+
+        const image = imageRef.current;
+        if (image && isPointInsideContainedImage(
+          { x: event.clientX, y: event.clientY },
+          image.getBoundingClientRect(),
+          image.naturalWidth,
+          image.naturalHeight,
+        )) return;
+
+        onClose();
       }}
     >
       <button
@@ -59,6 +72,7 @@ export function GalleryLightbox({
       </button>
       <div className="gallery-lightbox__image-wrap">
         <Image
+          ref={imageRef}
           src={item.image}
           alt={item.alt}
           fill

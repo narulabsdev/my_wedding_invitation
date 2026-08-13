@@ -33,8 +33,7 @@ body {
   margin: 0;
   background: #171814;
   color: var(--ink);
-  font-family:
-    "Apple SD Gothic Neo", "Noto Sans KR", Pretendard, Arial, sans-serif;
+  font-family: var(--font-body);
   overflow-x: clip;
 }
 
@@ -47,6 +46,150 @@ button,
 input,
 select {
   min-height: 48px;
+}
+
+.invite-builder {
+  min-height: 100svh;
+  padding: max(28px, env(safe-area-inset-top)) 20px
+    max(28px, env(safe-area-inset-bottom));
+  color: var(--color-gallery-ink);
+  background:
+    repeating-linear-gradient(
+      7deg,
+      transparent 0,
+      transparent 5px,
+      var(--color-gallery-fiber) 6px
+    ),
+    var(--color-gallery-paper);
+}
+
+.invite-builder__card {
+  width: min(100%, 680px);
+  margin: 0 auto;
+  padding: clamp(28px, 7vw, 58px);
+  border: 1px solid color-mix(in srgb, var(--color-gallery-wood) 30%, transparent);
+  border-radius: var(--radius-card, 16px);
+  background: var(--color-gallery-paper-light);
+  box-shadow: 0 18px 60px var(--color-gallery-shadow);
+}
+
+.invite-builder__eyebrow {
+  margin: 0 0 14px;
+  color: var(--color-gallery-terra);
+  font-family: var(--font-outlier);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+
+.invite-builder h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 8vw, 46px);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.invite-builder__description {
+  margin: 20px 0 0;
+  color: var(--color-gallery-ink-muted);
+  line-height: 1.75;
+}
+
+.invite-builder__form {
+  display: grid;
+  gap: 22px;
+  margin-top: 36px;
+}
+
+.invite-builder__form label,
+.invite-builder__result {
+  display: grid;
+  gap: 9px;
+}
+
+.invite-builder__form label > span,
+.invite-builder__result label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.invite-builder input,
+.invite-builder textarea {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-gallery-wood) 28%, transparent);
+  border-radius: 10px;
+  outline: none;
+  color: var(--color-gallery-ink);
+  background: #fff;
+  font: inherit;
+}
+
+.invite-builder input {
+  min-height: 50px;
+  padding: 0 14px;
+}
+
+.invite-builder textarea {
+  min-height: 150px;
+  padding: 14px;
+  line-height: 1.65;
+  resize: vertical;
+}
+
+.invite-builder input:focus,
+.invite-builder textarea:focus {
+  border-color: var(--color-gallery-terra);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-gallery-terra) 16%, transparent);
+}
+
+.invite-builder__form label small {
+  justify-self: end;
+  color: var(--color-gallery-ink-muted);
+  font-family: var(--font-outlier);
+  font-size: 10px;
+}
+
+.invite-builder__privacy {
+  margin: 0;
+  padding: 13px 15px;
+  border-left: 3px solid var(--color-gallery-gold);
+  color: var(--color-gallery-ink-muted);
+  background: color-mix(in srgb, var(--color-gallery-gold) 10%, transparent);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.invite-builder button {
+  min-height: 50px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--color-gallery-on-dark);
+  background: var(--color-gallery-terra);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.invite-builder button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.invite-builder__error {
+  margin: 18px 0 0;
+  color: var(--color-gallery-red);
+  font-size: 13px;
+}
+
+.invite-builder__result {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid color-mix(in srgb, var(--color-gallery-wood) 18%, transparent);
+}
+
+.invite-builder__result input {
+  font-family: var(--font-outlier);
+  font-size: 11px;
 }
 
 .invitation-loading {
@@ -111,8 +254,8 @@ select {
 
 .door-reveal__media[data-scrub-ready="true"] {
   filter:
-    saturate(var(--door-media-saturation, 0.62))
-    brightness(var(--door-media-brightness, 0.72));
+    saturate(var(--door-media-saturation, 1))
+    brightness(var(--door-media-brightness, 1));
 }
 
 .door-reveal__video {
@@ -131,10 +274,7 @@ select {
 
 .door-reveal__shade {
   z-index: 1;
-  background:
-    linear-gradient(180deg, rgb(6 10 8 / 36%), transparent 42%),
-    linear-gradient(0deg, rgb(6 9 7 / 72%), transparent 48%),
-    linear-gradient(90deg, rgb(7 10 7 / 22%), transparent 55%);
+  background: linear-gradient(0deg, rgb(6 9 7 / 28%), transparent 36%);
 }
 
 .door-reveal__media:not([data-scrub-ready="true"]) ~ .door-reveal__shade {
@@ -371,10 +511,10 @@ select {
 .door-invitation {
   position: absolute;
   z-index: 7;
-  top: 21%;
+  top: 9%;
   left: 50%;
-  width: min(78%, 340px);
-  padding: 25px 20px 23px;
+  width: min(84%, 360px);
+  padding: 24px 18px 21px;
   border: 1px solid rgb(103 63 38 / 42%);
   color: #24160f;
   text-align: center;
@@ -416,17 +556,15 @@ select {
   opacity: 0;
 }
 
-.door-seal {
+.invitation-seal {
   position: relative;
   display: block;
-  width: 92px;
   aspect-ratio: 624 / 669;
-  margin: -4px auto 15px;
   overflow: hidden;
   filter: drop-shadow(0 4px 8px rgb(116 69 52 / 18%));
 }
 
-.door-seal__image {
+.invitation-seal__image {
   position: absolute;
   top: -21.67%;
   left: -73.72%;
@@ -435,29 +573,49 @@ select {
   max-width: none;
 }
 
+.door-seal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 52px;
+}
+
 .door-invitation p {
+  max-width: calc(100% - 58px);
   margin: 0 0 13px;
-  font-family: "AppleMyungjo", "Batang", Georgia, serif;
-  font-size: 13px;
+  padding-left: 4px;
+  font-family: var(--font-display);
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.34em;
+  text-align: left;
 }
 
 .door-invitation h1 {
   margin: 0;
-  font-family: "AppleMyungjo", "Batang", Georgia, serif;
-  font-size: clamp(27px, 8vw, 37px);
+  font-family: var(--font-display);
+  font-size: clamp(22px, 6.2vw, 27px);
   font-weight: 600;
-  letter-spacing: -0.045em;
-  line-height: 1.35;
+  letter-spacing: -0.04em;
+  line-height: 1.48;
+}
+
+.door-invitation h1 span {
+  display: block;
+  white-space: nowrap;
+}
+
+.door-invitation.is-personalized h1 {
+  font-size: clamp(20px, 5.6vw, 24px);
+  line-height: 1.5;
 }
 
 .door-invitation small {
   display: block;
-  margin-top: 17px;
+  margin-top: 14px;
   font-family: Georgia, "Times New Roman", serif;
   color: #4d3323;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.18em;
 }
@@ -553,7 +711,7 @@ select {
 
 .door-status p {
   margin: 0 0 14px;
-  font-family: "AppleMyungjo", "Batang", serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -667,9 +825,59 @@ select {
 
 .door-behind-copy p {
   margin: 9px 0 0;
-  font-family: "AppleMyungjo", "Batang", serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 600;
+}
+
+.door-video-guide {
+  position: absolute;
+  z-index: 3;
+  bottom: 22%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 13px;
+  width: min(84%, 340px);
+  color: #f8f2e9;
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  text-shadow:
+    0 2px 4px rgb(0 0 0 / 100%),
+    0 5px 18px rgb(0 0 0 / 96%),
+    0 0 28px rgb(0 0 0 / 88%);
+  transform: translate3d(-50%, 12px, 0);
+  will-change: opacity, transform;
+}
+
+.door-video-guide p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.door-video-guide > span {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 36px;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 12px;
+  box-shadow: 0 2px 9px rgb(0 0 0 / 28%);
+}
+
+.door-video-guide i {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 3px;
+  height: 6px;
+  border-radius: 4px;
+  background: #fff;
+  animation: scroll-down 1.7s ease-in-out infinite;
 }
 
 .door-story-copy {
@@ -744,6 +952,13 @@ select {
   background: var(--color-gallery-paper-light);
 }
 
+.scrub-video-scroll--youngjoon-birth {
+  z-index: 11;
+  height: calc(var(--stable-scroll-vh, 1svh) * 760);
+  margin-top: calc(var(--stable-scroll-vh, 1svh) * -100);
+  background: transparent;
+}
+
 .scrub-video-sticky {
   position: sticky;
   top: 0;
@@ -753,6 +968,13 @@ select {
   overflow: hidden;
   isolation: isolate;
   background: #11130f;
+  backface-visibility: hidden;
+  will-change: opacity;
+}
+
+.scrub-video-sticky--deferred {
+  visibility: hidden;
+  opacity: 0;
 }
 
 .scrub-video-frame,
@@ -824,7 +1046,8 @@ select {
 
 .scrub-video-scroll--home-and-cookie .scrub-video-sticky,
 .scrub-video-scroll--ring-exchange .scrub-video-sticky,
-.scrub-video-scroll--canada-wedding .scrub-video-sticky {
+.scrub-video-scroll--canada-wedding .scrub-video-sticky,
+.scrub-video-scroll--youngjoon-birth .scrub-video-sticky {
   background: var(--color-gallery-paper-light);
 }
 
@@ -838,7 +1061,8 @@ select {
 }
 
 .scrub-video-shade.scrub-video-shade--ring-exchange,
-.scrub-video-shade.scrub-video-shade--canada-wedding {
+.scrub-video-shade.scrub-video-shade--canada-wedding,
+.scrub-video-shade.scrub-video-shade--youngjoon-birth {
   background: linear-gradient(
     180deg,
     var(--color-story-video-wash),
@@ -884,7 +1108,7 @@ select {
 
 .scrub-video-copy h2 {
   margin: 0;
-  font-family: "AppleMyungjo", "Batang", Georgia, serif;
+  font-family: var(--font-display);
   font-size: clamp(31px, 9vw, 43px);
   font-weight: 400;
   letter-spacing: -0.045em;
@@ -979,6 +1203,14 @@ select {
   padding-bottom: max(72px, calc(env(safe-area-inset-bottom) + 40px));
 }
 
+.scrub-video-label[data-placement="bottom-right"] {
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-top: 0;
+  padding-bottom: max(72px, calc(env(safe-area-inset-bottom) + 40px));
+  text-align: right;
+}
+
 .scrub-video-scroll--first-date .scrub-video-progress {
   background: rgb(45 39 36 / 20%);
 }
@@ -989,13 +1221,15 @@ select {
 
 .scrub-video-scroll--home-and-cookie .scrub-video-progress,
 .scrub-video-scroll--ring-exchange .scrub-video-progress,
-.scrub-video-scroll--canada-wedding .scrub-video-progress {
+.scrub-video-scroll--canada-wedding .scrub-video-progress,
+.scrub-video-scroll--youngjoon-birth .scrub-video-progress {
   background: var(--color-story-progress-track);
 }
 
 .scrub-video-scroll--home-and-cookie .scrub-video-progress span,
 .scrub-video-scroll--ring-exchange .scrub-video-progress span,
-.scrub-video-scroll--canada-wedding .scrub-video-progress span {
+.scrub-video-scroll--canada-wedding .scrub-video-progress span,
+.scrub-video-scroll--youngjoon-birth .scrub-video-progress span {
   background: var(--color-gallery-ink);
 }
 
@@ -1148,7 +1382,7 @@ select {
 
 .hero-copy h2 {
   margin: 0;
-  font-family: "AppleMyungjo", "Batang", Georgia, serif;
+  font-family: var(--font-display);
   font-size: clamp(34px, 5vw, 68px);
   font-weight: 400;
   line-height: 1.42;
@@ -1221,7 +1455,7 @@ select {
 .story-bridge h2,
 .gallery-invitation-handoff h2 {
   margin: 0;
-  font-family: "AppleMyungjo", "Batang", Georgia, serif;
+  font-family: var(--font-display);
   font-size: clamp(29px, 4.4vw, 58px);
   font-weight: 400;
   letter-spacing: -0.045em;
@@ -1235,6 +1469,83 @@ select {
   letter-spacing: 0.08em;
 }
 
+.gallery-prelude {
+  position: relative;
+  z-index: 12;
+  height: calc(var(--stable-scroll-vh, 1svh) * 240);
+  color: var(--color-gallery-ink);
+  background: var(--color-gallery-paper-light);
+}
+
+.gallery-prelude__sticky {
+  position: sticky;
+  top: 0;
+  display: grid;
+  height: 100vh;
+  height: 100svh;
+  min-height: 580px;
+  overflow: hidden;
+  isolation: isolate;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 42%, rgb(255 255 255 / 72%), transparent 46%),
+    repeating-linear-gradient(
+      7deg,
+      transparent 0,
+      transparent 5px,
+      var(--color-gallery-fiber) 6px
+    ),
+    var(--color-gallery-paper-light);
+}
+
+.gallery-prelude__content {
+  position: relative;
+  z-index: 2;
+  width: min(82%, 390px);
+  padding: 32px 18px;
+  opacity: 0;
+  text-align: center;
+  will-change: opacity, transform;
+}
+
+.gallery-prelude__content > p:first-child {
+  margin: 0 0 18px;
+  color: var(--color-gallery-terra);
+  font-family: var(--font-outlier);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+}
+
+.gallery-prelude__content h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 8.4vw, 46px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.52;
+}
+
+.gallery-prelude__content h2 span {
+  display: block;
+}
+
+.gallery-prelude__content i {
+  display: block;
+  width: 34px;
+  height: 1px;
+  margin: 27px auto 24px;
+  background: var(--color-gallery-gold);
+}
+
+.gallery-prelude__content > p:last-child {
+  max-width: 320px;
+  margin: 0 auto;
+  color: var(--color-gallery-ink-muted);
+  font-size: 14px;
+  line-height: 1.85;
+  word-break: keep-all;
+}
+
 .timeline-scroll {
   --gallery-scroll-step: calc(var(--stable-scroll-vh, 1svh) * 65);
   position: relative;
@@ -1243,7 +1554,7 @@ select {
     (var(--gallery-items, 5) * var(--gallery-scroll-step)) +
     (var(--stable-scroll-vh, 1svh) * 340)
   );
-  margin-top: calc(var(--stable-scroll-vh, 1svh) * -140);
+  margin-top: 0;
   background: transparent;
 }
 
@@ -1544,7 +1855,7 @@ select {
 }
 
 .timeline-end span {
-  font-family: "AppleMyungjo", "Batang", serif;
+  font-family: var(--font-display);
   font-size: 22px;
 }
 
@@ -1786,44 +2097,9 @@ select {
   will-change: opacity, transform;
 }
 
-.gallery-invitation-handoff__knot {
-  position: relative;
-  display: flex;
-  width: 66px;
-  height: 34px;
-  align-items: center;
-  justify-content: center;
+.gallery-invitation-handoff__seal {
+  width: clamp(88px, 26vw, 112px);
   margin: 0 auto var(--space-md);
-}
-
-.gallery-invitation-handoff__knot::after {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border: var(--rule-hairline) solid var(--color-gallery-gold);
-  background: var(--color-gallery-paper);
-  content: "";
-  transform: rotate(45deg);
-}
-
-.gallery-invitation-handoff__knot i {
-  width: 29px;
-  height: 19px;
-  border: var(--rule-frame) solid var(--color-gallery-red);
-  border-radius: 50%;
-  transform: rotate(18deg);
-}
-
-.gallery-invitation-handoff__knot i:last-child {
-  margin-inline-start: -5px;
-  border-color: var(--color-gallery-blue);
-  transform: rotate(-18deg);
-}
-
-.gallery-invitation-handoff .hanji-mark {
-  z-index: 2;
-  opacity: var(--handoff-copy-opacity);
-  will-change: opacity;
 }
 
 .gallery-invitation-handoff .section-number {
@@ -1833,6 +2109,15 @@ select {
   font-size: 10px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.2em;
+}
+
+.gallery-invitation-handoff__recipient {
+  margin: 0 0 var(--space-sm);
+  color: var(--color-gallery-red);
+  font-family: var(--font-display);
+  font-size: clamp(15px, 4.5vw, 19px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 .gallery-invitation-handoff h2 {
@@ -1850,6 +2135,7 @@ select {
   font-family: var(--font-display);
   font-size: clamp(14px, 4vw, 16px);
   line-height: 2;
+  white-space: pre-line;
 }
 
 .hanji-mark {
@@ -1934,7 +2220,7 @@ select {
 
 .ceremony h2 {
   margin: 0;
-  font-family: "AppleMyungjo", "Batang", Georgia, serif;
+  font-family: var(--font-display);
   font-size: clamp(28px, 4vw, 46px);
   font-weight: 400;
 }
@@ -1979,18 +2265,167 @@ select {
   background: var(--ivory);
 }
 
+.map-chooser-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  padding: max(20px, env(safe-area-inset-top)) 20px
+    max(20px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  place-items: center;
+  background: rgb(11 12 10 / 72%);
+  backdrop-filter: blur(8px);
+}
+
+.map-chooser-modal {
+  position: relative;
+  width: min(100%, 440px);
+  max-height: calc(100svh - 40px);
+  padding: 38px clamp(22px, 7vw, 38px) 32px;
+  overflow-y: auto;
+  border: 1px solid rgb(162 98 73 / 24%);
+  border-radius: 22px;
+  color: var(--ink);
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgb(180 154 98 / 12%), transparent 34%),
+    var(--ivory);
+  box-shadow: 0 28px 80px rgb(0 0 0 / 32%);
+  animation: map-chooser-enter 220ms ease-out both;
+}
+
+.ceremony .map-chooser-modal__close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  display: grid;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0;
+  border-color: rgb(45 39 36 / 16%);
+  color: var(--ink);
+  place-items: center;
+  background: rgb(255 255 255 / 54%);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.ceremony .map-chooser-modal__close:hover,
+.ceremony .map-chooser-modal__close:focus-visible {
+  border-color: var(--ink);
+  color: var(--ivory);
+  background: var(--ink);
+}
+
+.map-chooser-modal__pin {
+  width: 11px;
+  height: 11px;
+  margin: 0 auto 20px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--color-gallery-terra);
+  box-shadow: 0 0 0 7px rgb(162 98 73 / 11%);
+  transform: rotate(-45deg);
+}
+
+.map-chooser-modal h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(27px, 7vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.map-chooser-modal__description {
+  margin: 11px 0 0;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.map-chooser-modal__venue {
+  display: grid;
+  gap: 7px;
+  margin-top: 25px;
+  padding: 17px 15px;
+  border-block: 1px solid rgb(162 98 73 / 16%);
+}
+
+.map-chooser-modal__venue strong {
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+
+.map-chooser-modal__venue span {
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.map-chooser-modal__options {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.map-chooser-modal__options a {
+  display: grid;
+  min-height: 72px;
+  padding: 11px 16px 11px 11px;
+  border: 1px solid rgb(45 39 36 / 13%);
+  border-radius: 15px;
+  align-items: center;
+  color: var(--ink);
+  grid-template-columns: 48px 1fr auto;
+  gap: 14px;
+  text-align: left;
+  text-decoration: none;
+  background: rgb(255 255 255 / 68%);
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.map-chooser-modal__options a:hover,
+.map-chooser-modal__options a:focus-visible {
+  border-color: var(--color-gallery-terra);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.map-chooser-modal__options img {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+
+.map-chooser-modal__options span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.map-chooser-modal__options i {
+  color: var(--color-muted);
+  font-size: 13px;
+  font-style: normal;
+}
+
+@keyframes map-chooser-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+}
+
 .details {
   display: grid;
-  max-width: 1180px;
+  max-width: 920px;
   margin: 0 auto;
   padding: 15vh clamp(24px, 7vw, 100px);
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 16px;
   background: var(--color-surface);
 }
 
 .details article {
-  min-height: 430px;
+  min-height: 0;
   padding: clamp(38px, 6vw, 78px);
   border: 1px solid rgb(162 98 73 / 16%);
   border-radius: 16px;
@@ -2004,8 +2439,8 @@ select {
 }
 
 .details h3 {
-  margin: 45px 0 24px;
-  font-family: "AppleMyungjo", "Batang", Georgia, serif;
+  margin: 28px 0 10px;
+  font-family: var(--font-display);
   font-size: 32px;
   font-weight: 400;
 }
@@ -2017,16 +2452,79 @@ select {
   line-height: 2;
 }
 
-.details button {
-  margin-top: 44px;
-  border-color: rgb(162 98 73 / 42%);
+.details .details__venue {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
 }
 
-.details button:hover,
-.details button:focus-visible {
-  border-color: var(--ink);
-  color: var(--ivory);
-  background: var(--ink);
+.details__contact {
+  display: grid;
+  gap: 9px;
+  margin: 25px 0 0;
+  padding: 18px 0;
+  border-block: 1px solid rgb(162 98 73 / 16%);
+}
+
+.details__contact > div {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 12px;
+}
+
+.details__contact dt {
+  color: var(--sage);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.details__contact dd {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.details__contact a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+.details__routes {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.details__routes section {
+  padding: 18px 19px;
+  border-radius: 12px;
+  background: rgb(45 39 36 / 3.5%);
+}
+
+.details__routes h4 {
+  margin: 0 0 7px;
+  color: var(--color-gallery-terra);
+  font-size: 12px;
+}
+
+.details__routes p {
+  line-height: 1.75;
+}
+
+.details__routes .details__parking {
+  border: 1px solid rgb(180 154 98 / 24%);
+  background: rgb(180 154 98 / 8%);
+}
+
+.details__parking small {
+  display: block;
+  margin-top: 9px;
+  color: var(--color-gallery-terra);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.6;
 }
 
 .ending {
@@ -2073,7 +2571,7 @@ select {
 
 .ending-copy h2 {
   margin: 0 0 26px;
-  font-family: "AppleMyungjo", "Batang", Georgia, serif;
+  font-family: var(--font-display);
   font-size: clamp(34px, 5vw, 66px);
   font-weight: 400;
   line-height: 1.45;
@@ -2402,7 +2900,7 @@ select {
   }
 
   .door-reveal__media[data-scrub-ready="true"] {
-    filter: saturate(0.82) brightness(0.86) !important;
+    filter: saturate(1) brightness(1) !important;
   }
 
   .door-behind-copy {
@@ -2410,8 +2908,13 @@ select {
     transform: none !important;
   }
 
+  .door-video-guide {
+    display: none;
+  }
+
   .loading-dots i,
   .door-scroll-prompt i,
+  .door-video-guide i,
   .door-sticky.is-ready .door-progress span,
   .tree-shadow__motion {
     animation: none;
@@ -2466,6 +2969,19 @@ select {
   .mobile-invitation .timeline-scroll {
     height: auto;
     margin-top: 0;
+  }
+
+  .gallery-prelude {
+    height: 100svh;
+  }
+
+  .gallery-prelude__sticky {
+    position: relative;
+  }
+
+  .gallery-prelude__content {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   .timeline-sticky {

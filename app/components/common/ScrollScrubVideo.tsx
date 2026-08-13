@@ -2,14 +2,17 @@
 
 import { useEffect, useRef } from "react";
 import type { StoryVideo } from "../../content/invitation";
+import { readStableScrollViewportHeight } from "../../lib/stable-scroll-viewport";
+import {
+  mapFirstDateCopyOpacity,
+  mapStoryEntranceOpacity,
+  mapStoryExitOpacity,
+} from "../../lib/story-video-timing";
 import { createVideoScrubber } from "../../lib/video-scrubber";
 import { StoryVideoCopy } from "./StoryVideoCopy";
 
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
-const FIRST_DATE_ENTRANCE_END = 0.035;
-const FIRST_DATE_COPY_FADE_OUT_START = 0.08;
-const FIRST_DATE_COPY_FADE_OUT_END = 0.18;
 const STORY_LABEL_FADE_RANGE = 0.055;
 
 type ScrollScrubVideoProps = {
@@ -46,8 +49,6 @@ export function ScrollScrubVideo({
 
     const render = (progress: number) => {
       const copy = section.querySelector<HTMLElement>("[data-story-video-copy]");
-      const entrance = clamp(progress / FIRST_DATE_ENTRANCE_END);
-      const usesEntranceFade = scene.id === "first-date";
 
       videoScrubber.seek(progress);
 
@@ -57,10 +58,7 @@ export function ScrollScrubVideo({
 
       if (copy) {
         const opacity = scene.id === "first-date"
-          ? entrance * clamp(
-            (FIRST_DATE_COPY_FADE_OUT_END - progress) /
-              (FIRST_DATE_COPY_FADE_OUT_END - FIRST_DATE_COPY_FADE_OUT_START),
-          )
+          ? mapFirstDateCopyOpacity(progress)
           : scene.id === "vancouver"
             ? clamp(1 - progress * 2.2)
             : Math.min(clamp((progress - 0.06) * 4), clamp((1.04 - progress) * 4));
@@ -88,8 +86,12 @@ export function ScrollScrubVideo({
           label.style.transform = `translate3d(0, ${(1 - opacity) * 18}px, 0)`;
         });
 
-      if (sticky && usesEntranceFade) {
-        sticky.style.opacity = String(entrance);
+      if (sticky) {
+        const storyOpacity =
+          mapStoryEntranceOpacity(scene.id, progress) *
+            mapStoryExitOpacity(scene.id, progress);
+        sticky.style.opacity = String(storyOpacity);
+        sticky.style.visibility = storyOpacity <= 0.001 ? "hidden" : "visible";
       }
     };
 
@@ -130,7 +132,7 @@ export function ScrollScrubVideo({
         sticky?.style.setProperty(
           "transform",
           isWiping
-            ? `translate3d(0, ${-(1 - progress) * window.innerHeight}px, 0)`
+            ? `translate3d(0, ${-(1 - progress) * readStableScrollViewportHeight()}px, 0)`
             : "",
         );
         sticky?.style.setProperty(
@@ -196,7 +198,11 @@ export function ScrollScrubVideo({
       aria-label={scene.ariaLabel}
       data-scroll-video={scene.id}
     >
-      <div className="scrub-video-sticky">
+      <div
+        className={`scrub-video-sticky${
+          scene.id === "youngjoon-birth" ? " scrub-video-sticky--deferred" : ""
+        }`}
+      >
         <div ref={mediaFrameRef} className="scrub-video-frame">
           <video
             ref={videoRef}

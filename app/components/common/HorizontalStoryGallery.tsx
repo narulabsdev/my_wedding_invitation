@@ -9,18 +9,19 @@ import {
   useState,
 } from "react";
 import type { GalleryMemory } from "../../content/invitation";
+import { resolveGalleryScrollTimeline } from "../../lib/gallery-scroll-timeline";
 import {
   requestScrollFrame,
   subscribeToScrollFrame,
 } from "../../lib/scroll-frame";
+import { readStableScrollViewportHeight } from "../../lib/stable-scroll-viewport";
 import { GalleryLightbox } from "./GalleryLightbox";
+import { InvitationSeal } from "./InvitationSeal";
 
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
 
 const GALLERY_ENTRANCE_END = 0.035;
-const GALLERY_TRAVEL_END = 0.85;
-const GALLERY_HANDOFF_START = 0.93;
 const GALLERY_FRAME_BASE_OFFSET = 28;
 const GALLERY_FRAME_ZIGZAG_OFFSET = 34;
 
@@ -33,11 +34,14 @@ type HorizontalStoryGalleryProps = {
   lightboxLabel: string;
   items: GalleryMemory[];
   invitation: {
-    mark: readonly [string, string];
     sectionLabel: string;
     title: readonly [string, string];
     body: readonly [string, string];
   };
+  personalizedInvitation?: {
+    greeting: string;
+    message: string;
+  } | null;
 };
 
 export function HorizontalStoryGallery({
@@ -49,6 +53,7 @@ export function HorizontalStoryGallery({
   lightboxLabel,
   items,
   invitation,
+  personalizedInvitation,
 }: HorizontalStoryGalleryProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -59,6 +64,7 @@ export function HorizontalStoryGallery({
   const progressRef = useRef<HTMLSpanElement>(null);
   const handoffRef = useRef<HTMLElement>(null);
   const openerRef = useRef<HTMLButtonElement>(null);
+  const lightboxScrollTopRef = useRef(0);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -66,15 +72,18 @@ export function HorizontalStoryGallery({
     if (!section || !track) return;
 
     const render = () => {
-      const range = Math.max(1, section.offsetHeight - window.innerHeight);
+      const viewportHeight = readStableScrollViewportHeight();
+      const range = Math.max(1, section.offsetHeight - viewportHeight);
       const progress = clamp(-section.getBoundingClientRect().top / range);
+      const timeline = resolveGalleryScrollTimeline(range, viewportHeight);
       const entranceProgress = clamp(progress / GALLERY_ENTRANCE_END);
       const horizontalProgress = clamp(
         (progress - GALLERY_ENTRANCE_END) /
-          (GALLERY_TRAVEL_END - GALLERY_ENTRANCE_END),
+          (timeline.travelEnd - GALLERY_ENTRANCE_END),
       );
       const handoffProgress = clamp(
-        (progress - GALLERY_HANDOFF_START) / (1 - GALLERY_HANDOFF_START),
+        (progress - timeline.handoffStart) /
+          (timeline.handoffFadeEnd - timeline.handoffStart),
       );
       const invitationProgress = clamp((handoffProgress - 0.16) / 0.7);
       const galleryOpacity = 1 - handoffProgress;
@@ -144,8 +153,17 @@ export function HorizontalStoryGallery({
   }, []);
 
   const closeLightbox = useCallback(() => {
+    const scrollTop = lightboxScrollTopRef.current;
     setActiveIndex(null);
-    window.requestAnimationFrame(() => openerRef.current?.focus());
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: scrollTop, left: 0, behavior: "instant" });
+      openerRef.current?.focus({ preventScroll: true });
+      requestScrollFrame();
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: scrollTop, left: 0, behavior: "instant" });
+        requestScrollFrame();
+      });
+    });
   }, []);
 
   return (
@@ -158,7 +176,7 @@ export function HorizontalStoryGallery({
       <div ref={stickyRef} className="timeline-sticky">
         <header ref={headingRef} className="timeline-heading">
           <span>{heading}</span>
-          <span>{hint}</span>
+          {hint ? <span>{hint}</span> : null}
         </header>
 
         <div ref={trackRef} className="timeline-track">
@@ -178,6 +196,7 @@ export function HorizontalStoryGallery({
                   aria-label={`${openPhotoLabel}: ${memory.alt}`}
                   aria-haspopup="dialog"
                   onClick={(event) => {
+                    lightboxScrollTopRef.current = window.scrollY;
                     openerRef.current = event.currentTarget;
                     setActiveIndex(index);
                   }}
@@ -242,25 +261,29 @@ export function HorizontalStoryGallery({
             <span />
             <span />
           </div>
-          <div className="hanji-mark" aria-hidden="true">
-            <span>{invitation.mark[0]}</span>
-            <span>{invitation.mark[1]}</span>
-          </div>
           <div className="gallery-invitation-handoff__content">
-            <span className="gallery-invitation-handoff__knot" aria-hidden="true">
-              <i />
-              <i />
-            </span>
+            <InvitationSeal className="gallery-invitation-handoff__seal" />
             <p className="section-number">{invitation.sectionLabel}</p>
+            {personalizedInvitation ? (
+              <p className="gallery-invitation-handoff__recipient">
+                {personalizedInvitation.greeting}
+              </p>
+            ) : null}
             <h2 id="gallery-invitation-title">
               {invitation.title[0]}
               <br />{" "}
               {invitation.title[1]}
             </h2>
             <p className="gallery-invitation-handoff__body">
-              {invitation.body[0]}
-              <br />{" "}
-              {invitation.body[1]}
+              {personalizedInvitation ? (
+                personalizedInvitation.message
+              ) : (
+                <>
+                  {invitation.body[0]}
+                  <br />{" "}
+                  {invitation.body[1]}
+                </>
+              )}
             </p>
           </div>
         </article>
