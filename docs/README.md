@@ -14,7 +14,7 @@
 1. [01-project-brief.md](./01-project-brief.md) — 프로젝트 목적, 핵심 콘셉트, 사용자 경험, 범위
 2. [02-storyboard.md](./02-storyboard.md) — 화면 순서와 장면별 상세 연출
 3. [03-design-system.md](./03-design-system.md) — 컬러, 서체, 재질, 레이아웃, 사진 방향
-4. [04-motion-interaction-spec.md](./04-motion-interaction-spec.md) — 완자살 로딩, 문 열림, 스크롤·수평 타임라인 명세
+4. [04-motion-interaction-spec.md](./04-motion-interaction-spec.md) — 완자살 로딩, 문 열림, 영상 스크럽·수평 갤러리 명세
 5. [05-content-assets.md](./05-content-assets.md) — 문구, 이미지 리소스, 교체·확인 항목
 6. [06-development-handoff.md](./06-development-handoff.md) — 구현 구조, 반응형, 접근성, 성능, 개발 체크리스트
 

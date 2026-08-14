@@ -29,5 +29,119 @@ test("renders development preview metadata", async () => {
     response.headers.get("content-type") ?? "",
     /^text\/html\b/i,
   );
-  assert.match(await response.text(), developmentPreviewMeta);
+  const html = await response.text();
+  assert.match(html, developmentPreviewMeta);
+  assert.match(
+    html,
+    /<meta(?=[^>]*\bproperty=["']og:title["'])(?=[^>]*\bcontent=["']윤상호 · 스테프 퓌제서리의 혼례에 초대합니다["'])[^>]*>/,
+  );
+  assert.match(
+    html,
+    /<meta(?=[^>]*\bproperty=["']og:description["'])(?=[^>]*윤재관 · 김정수의 장남 윤상호와 피터 퓌제서리 · 메기 퓌제서리의 차녀 스테프 퓌제서리의 혼례에 초대합니다\.)[^>]*>/,
+  );
+  assert.match(
+    html,
+    /<meta(?=[^>]*\bproperty=["']og:image["'])(?=[^>]*metadata-seal-transparent\.png)[^>]*>/,
+  );
+
+  const firstVideo = html.indexOf("/videos/001-scroll.mp4");
+  const firstDateVideo = html.indexOf("/videos/002-scroll.mp4");
+  const homeAndCookieVideo = html.indexOf("/videos/003-scroll.mp4");
+  const ringExchangeVideo = html.indexOf("/videos/004-scroll.mp4");
+  const canadaWeddingVideo = html.indexOf("/videos/005-scroll.mp4");
+  const youngjoonBirthVideo = html.indexOf("/videos/006.mp4");
+  const endingVideo = html.indexOf("/videos/007-scroll.mp4");
+  const gallery = html.indexOf("OUR GALLERY");
+  const galleryPrelude = html.indexOf("From separate lives");
+  const invitation = html.indexOf('class="gallery-invitation-handoff"');
+
+  assert.ok(firstVideo >= 0, "renders the first scroll-scrub video");
+  assert.ok(firstDateVideo > firstVideo, "renders the first-date video after video one");
+  assert.ok(
+    homeAndCookieVideo > firstDateVideo,
+    "renders the moving-in and Cookie video after the first-date video",
+  );
+  assert.ok(
+    ringExchangeVideo > homeAndCookieVideo,
+    "renders the ring-exchange video after the moving-in and Cookie video",
+  );
+  assert.ok(
+    canadaWeddingVideo > ringExchangeVideo,
+    "renders the Canada wedding video after the ring-exchange video",
+  );
+  assert.ok(
+    youngjoonBirthVideo > canadaWeddingVideo,
+    "renders Youngjoon's birth video after the Canada wedding video",
+  );
+  assert.match(
+    html,
+    /class="scrub-video-sticky scrub-video-sticky--deferred"/,
+    "keeps the birth video hidden until its scroll transition begins",
+  );
+  assert.ok(
+    galleryPrelude > youngjoonBirthVideo && gallery > galleryPrelude,
+    "renders the gallery prelude after Youngjoon's birth video and before the gallery",
+  );
+  assert.ok(
+    gallery > youngjoonBirthVideo,
+    "renders the horizontal gallery after Youngjoon's birth video",
+  );
+  assert.ok(invitation > gallery, "renders the invitation message after the gallery");
+  assert.ok(
+    endingVideo > invitation,
+    "renders the final family video after the invitation details",
+  );
+  assert.doesNotMatch(html, /\/videos\/(?:canada-wedding|family-home)\.mp4/);
+  const videoTags = html.match(/<video\b[^>]*>/g) ?? [];
+  assert.equal(videoTags.length, 7, "renders all seven scroll-scrub videos");
+  videoTags.forEach((videoTag) => {
+    assert.match(
+      videoTag,
+      /\bposter="\/images\/video-posters\/00[1-7]\.webp(?:\?[^\"]+)?"/,
+      "gives every scrub video a static poster fallback",
+    );
+    assert.match(videoTag, /\bplaysinline=""/i, "keeps videos inline on mobile");
+    assert.doesNotMatch(videoTag, /\bcontrols(?:=|\s|>)/, "does not expose native video controls");
+  });
+  assert.match(html, /class="ending-video-label"/);
+  assert.match(html, /VANCOUVER/);
+  assert.match(html, /data-locale="en"/);
+  assert.match(html, /Where our story begins/);
+  assert.match(html, /Our first date/);
+  assert.match(html, /2022 · 10 · 08/);
+  assert.match(html, /The day we began our life together/);
+  assert.match(html, /2023\.03\.04/);
+  assert.match(html, /The day Cookie joined our family/);
+  assert.match(html, /2023\.04\.06/);
+  assert.match(html, /The proposal/);
+  assert.match(html, /2024\.10\.08/);
+  assert.match(html, /Our Canadian wedding/);
+  assert.match(html, /2025\.05\.05/);
+  assert.match(html, /Youngjoon&#x27;s birth/);
+  assert.match(html, /2026\.07\.10 4:58/);
+  assert.doesNotMatch(html, />RSVP</);
+  assert.doesNotMatch(html, /Will you join us\?|Send RSVP/);
+  assert.match(html, /Lotte World Folk Museum Traditional Wedding Hall/);
+  assert.match(html, /3:00 PM/);
+  assert.match(html, /href="\/api\/calendar\?locale=en"/);
+  assert.match(html, /Two hours free for wedding guests/);
+  assert.match(html, /Please join us/);
+  assert.match(html, /for our wedding/);
+  assert.match(html, /--gallery-items:20/);
+  assert.ok(
+    (html.match(/sangho-steph-square-tassel\.png/g) ?? []).length >= 2,
+    "uses the selected seal on the door and invitation handoff",
+  );
+  assert.equal(
+    (html.match(/class="memory-card[^"]*"/g) ?? []).length,
+    20,
+    "renders all 20 gallery photos",
+  );
+  assert.match(html, /\/images\/gallery\/gallery-01\.jpg/);
+  assert.match(html, /\/images\/gallery\/gallery-20\.jpg/);
+  assert.doesNotMatch(html, /Our story · Vancouver to Seoul/);
+  assert.doesNotMatch(
+    html,
+    /\/images\/(?:vancouver-story|canada-wedding|family-three)\.webp/,
+  );
 });

@@ -6,7 +6,7 @@ Drizzle support.
 
 ## Prerequisites
 
-- Node.js `>=22.13.0`
+- Node.js 24 LTS
 - Linux with `flock`, `curl`, and GNU `timeout`
 
 ## Sites Lifecycle
@@ -102,7 +102,36 @@ Use build and validation commands for targeted diagnosis after a remote failure,
 
 The timeout defaults can be overridden for a controlled canary with `SITES_INSTALL_TIMEOUT`, `SITES_INSTALL_KILL_AFTER`, `SITES_BUILD_TIMEOUT`, and `SITES_BUILD_KILL_AFTER`. A timeout fails the command; the helpers never retry an unchanged install or build.
 
+# Wedding Seal Assets
+
+프로젝트 배치 경로:
+
+```text
+public/wedding/seals/
+```
+
+## 파일 목록
+
+- `sangho-steph-square-tassel.png`
+- `sangho-steph-circle-wave.png`
+- `sangho-steph-vertical-name.png`
+- `sangho-steph-circle-plum.png`
+- `sangho-steph-clover-tassel.png`
+- `sangho-steph-rounded-square-wave.png`
+
+최종안을 결정한 뒤 선택한 파일을 `main-seal.png`로 복사해 사용하는 방식을 권장합니다.
+
 ## Learn More
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+
+## Invitation Builder Access Code
+
+맞춤 초대 링크 생성 화면의 관리자 코드는 macOS 터미널에서 다음 명령으로 확인합니다.
+
+```bash
+security find-generic-password \
+  -s "our-wedding.narulabs.ca invitation builder" \
+  -w
+```

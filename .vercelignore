@@ -1,0 +1,8 @@
+.hallmark/
+.openai/
+.playwright-cli/
+output/
+tsconfig.tsbuildinfo
+
+# Local source footage that is not referenced by the invitation.
+public/videos/vancouver-opening.mp4
