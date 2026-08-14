@@ -112,6 +112,7 @@ type InvitationCopy = {
   door: {
     ariaLabel: string;
     coupleNames: string;
+    familyIntroductionLines?: readonly string[];
     invitationLines: readonly [string, string];
     personalizedInvitationLines: (
       recipientName: string,
@@ -556,6 +557,12 @@ const localizedCopy = {
     door: {
       ariaLabel: "전통 창호문을 열고 이야기 안으로 들어가기",
       coupleNames: "상호 · 스테프",
+      familyIntroductionLines: [
+        "윤재관 · 김정수의 장남",
+        "신랑 윤상호",
+        "피터 퓌제서리 · 메기 퓌제서리의 차녀",
+        "신부 스테프 퓌제서리",
+      ],
       invitationLines: [
         "저희 두 사람의 혼례에",
         "귀한 걸음 해주세요",

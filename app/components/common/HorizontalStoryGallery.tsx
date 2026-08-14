@@ -77,7 +77,9 @@ export function HorizontalStoryGallery({
       const viewportHeight = readStableScrollViewportHeight();
       const range = Math.max(1, section.offsetHeight - viewportHeight);
       const progress = clamp(-section.getBoundingClientRect().top / range);
-      const timeline = resolveGalleryScrollTimeline(range, viewportHeight);
+      const timeline = resolveGalleryScrollTimeline(range, viewportHeight, {
+        invitationReadHoldViewports: personalizedInvitation ? 0 : undefined,
+      });
       const entranceProgress = clamp(progress / GALLERY_ENTRANCE_END);
       const horizontalProgress = clamp(
         (progress - GALLERY_ENTRANCE_END) /
@@ -152,7 +154,7 @@ export function HorizontalStoryGallery({
       observer.disconnect();
       unsubscribe();
     };
-  }, []);
+  }, [personalizedInvitation]);
 
   const closeLightbox = useCallback(() => {
     const scrollTop = lightboxScrollTopRef.current;
@@ -168,18 +170,66 @@ export function HorizontalStoryGallery({
     });
   }, []);
 
-  return (
-    <section
-      ref={sectionRef}
-      className="timeline-scroll"
-      aria-label={ariaLabel}
-      style={{ "--gallery-items": Math.max(items.length, 1) } as CSSProperties}
+  const invitationHandoff = (
+    <article
+      ref={handoffRef}
+      className={`gallery-invitation-handoff${personalizedInvitation ? " gallery-invitation-handoff--flow is-personalized" : ""}`}
+      aria-labelledby="gallery-invitation-title"
     >
-      <div ref={stickyRef} className="timeline-sticky">
-        <header ref={headingRef} className="timeline-heading">
-          <span>{heading}</span>
-          {hint ? <span>{hint}</span> : null}
-        </header>
+      <div className="gallery-invitation-handoff__surface" aria-hidden="true" />
+      <div className="gallery-invitation-handoff__frame" aria-hidden="true">
+        <span />
+        <span />
+      </div>
+      <div className="gallery-invitation-handoff__content">
+        <InvitationSeal className="gallery-invitation-handoff__seal" />
+        <p className="section-number">{invitation.sectionLabel}</p>
+        {personalizedInvitation ? (
+          <p className="gallery-invitation-handoff__recipient">
+            {personalizedInvitation.greeting}
+          </p>
+        ) : null}
+        <h2 id="gallery-invitation-title">
+          {invitation.title[0]}
+          <br />{" "}
+          {invitation.title[1]}
+        </h2>
+        <p className="gallery-invitation-handoff__body">
+          {personalizedInvitation ? (
+            personalizedInvitation.message.split("\n").map((line, index) => (
+              <span
+                className={`gallery-invitation-handoff__body-line${line.length === 0 ? " is-blank" : ""}`}
+                key={`${index}-${line}`}
+                aria-hidden={line.length === 0 ? "true" : undefined}
+              >
+                {line}
+              </span>
+            ))
+          ) : (
+            <>
+              {invitation.body[0]}
+              <br />{" "}
+              {invitation.body[1]}
+            </>
+          )}
+        </p>
+      </div>
+    </article>
+  );
+
+  return (
+    <>
+      <section
+        ref={sectionRef}
+        className="timeline-scroll"
+        aria-label={ariaLabel}
+        style={{ "--gallery-items": Math.max(items.length, 1) } as CSSProperties}
+      >
+        <div ref={stickyRef} className="timeline-sticky">
+          <header ref={headingRef} className="timeline-heading">
+            <span>{heading}</span>
+            {hint ? <span>{hint}</span> : null}
+          </header>
 
         <div ref={trackRef} className="timeline-track">
           <div className="timeline-spacer" aria-hidden="true" />
@@ -253,43 +303,11 @@ export function HorizontalStoryGallery({
           <span ref={progressRef} />
         </div>
 
-        <article
-          ref={handoffRef}
-          className={`gallery-invitation-handoff${personalizedInvitation ? " is-personalized" : ""}`}
-          aria-labelledby="gallery-invitation-title"
-        >
-          <div className="gallery-invitation-handoff__surface" aria-hidden="true" />
-          <div className="gallery-invitation-handoff__frame" aria-hidden="true">
-            <span />
-            <span />
-          </div>
-          <div className="gallery-invitation-handoff__content">
-            <InvitationSeal className="gallery-invitation-handoff__seal" />
-            <p className="section-number">{invitation.sectionLabel}</p>
-            {personalizedInvitation ? (
-              <p className="gallery-invitation-handoff__recipient">
-                {personalizedInvitation.greeting}
-              </p>
-            ) : null}
-            <h2 id="gallery-invitation-title">
-              {invitation.title[0]}
-              <br />{" "}
-              {invitation.title[1]}
-            </h2>
-            <p className="gallery-invitation-handoff__body">
-              {personalizedInvitation ? (
-                personalizedInvitation.message
-              ) : (
-                <>
-                  {invitation.body[0]}
-                  <br />{" "}
-                  {invitation.body[1]}
-                </>
-              )}
-            </p>
-          </div>
-        </article>
-      </div>
+          {personalizedInvitation ? null : invitationHandoff}
+        </div>
+      </section>
+
+      {personalizedInvitation ? invitationHandoff : null}
 
       {activeIndex === null || !items[activeIndex]?.image ? null : (
         <GalleryLightbox
@@ -299,6 +317,6 @@ export function HorizontalStoryGallery({
           onClose={closeLightbox}
         />
       )}
-    </section>
+    </>
   );
 }

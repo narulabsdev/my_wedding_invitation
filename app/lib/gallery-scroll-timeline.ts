@@ -15,12 +15,17 @@ const clamp = (value: number, min = 0, max = 1) =>
 export const resolveGalleryScrollTimeline = (
   scrollRange: number,
   viewportHeight: number,
+  options: { invitationReadHoldViewports?: number } = {},
 ) => {
   const safeRange = Math.max(1, scrollRange);
   const safeViewport = Math.max(1, viewportHeight);
+  const invitationReadHoldViewports = Math.max(
+    0,
+    options.invitationReadHoldViewports ?? INVITATION_READ_HOLD_VIEWPORTS,
+  );
   const handoffFadeEndPixels = Math.max(
     0,
-    safeRange - safeViewport * INVITATION_READ_HOLD_VIEWPORTS,
+    safeRange - safeViewport * invitationReadHoldViewports,
   );
   const handoffStartPixels = Math.max(
     0,

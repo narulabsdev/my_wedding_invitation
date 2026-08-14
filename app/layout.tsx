@@ -11,11 +11,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const weddingShareTitle = "윤상호 · 스테프 퓌제서리의 혼례에 초대합니다";
+const weddingShareDescription =
+  "윤재관 · 김정수의 장남 윤상호와 피터 퓌제서리 · 메기 퓌제서리의 차녀 스테프 퓌제서리의 혼례에 초대합니다.";
+const weddingShareImage = "/wedding/seals/metadata-seal-transparent.png";
+
 export const metadata: Metadata = {
   metadataBase: new URL(PUBLIC_SITE_URL),
-  title: "Sang Ho & Steph · Our Story",
-  description:
-    "Sang Ho and Steph's family story, from Vancouver to a traditional wedding in Seoul.",
+  title: weddingShareTitle,
+  description: weddingShareDescription,
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: "/",
+    siteName: "윤상호 · 스테프 퓌제서리 혼례",
+    title: weddingShareTitle,
+    description: weddingShareDescription,
+    images: [
+      {
+        url: weddingShareImage,
+        width: 1294,
+        height: 835,
+        alt: "윤상호와 스테프 퓌제서리의 혼례 안내 인장",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: weddingShareTitle,
+    description: weddingShareDescription,
+    images: [weddingShareImage],
+  },
   other: {
     "codex-preview": "development",
   },

@@ -92,6 +92,14 @@ test("uses the requested traditional-door invitation copy", () => {
   ]);
   assert.equal(door.coupleNames, "상호 · 스테프");
   assert.equal(door.invitationDate, "2026년 11월 1일");
+  assert.deepEqual(door.familyIntroductionLines, [
+    "윤재관 · 김정수의 장남",
+    "신랑 윤상호",
+    "피터 퓌제서리 · 메기 퓌제서리의 차녀",
+    "신부 스테프 퓌제서리",
+  ]);
+  assert.equal(getInvitationContent("ja").door.familyIntroductionLines, undefined);
+  assert.equal(getInvitationContent("en").door.familyIntroductionLines, undefined);
 });
 
 test("uses the corrected Korean ceremony time and readable date labels", () => {

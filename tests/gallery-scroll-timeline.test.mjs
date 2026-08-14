@@ -47,3 +47,13 @@ test("holds the fully revealed invitation long enough to read", () => {
     scrollRange - timeline.handoffFadeEndPixels >= viewportHeight * 1.5,
   );
 });
+
+test("hands personalized invitations to their content-sized page without a fixed read hold", () => {
+  const viewportHeight = 730;
+  const scrollRange = 11242;
+  const timeline = resolveGalleryScrollTimeline(scrollRange, viewportHeight, {
+    invitationReadHoldViewports: 0,
+  });
+
+  assert.equal(timeline.handoffFadeEndPixels, scrollRange);
+});

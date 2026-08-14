@@ -31,6 +31,18 @@ test("renders development preview metadata", async () => {
   );
   const html = await response.text();
   assert.match(html, developmentPreviewMeta);
+  assert.match(
+    html,
+    /<meta(?=[^>]*\bproperty=["']og:title["'])(?=[^>]*\bcontent=["']윤상호 · 스테프 퓌제서리의 혼례에 초대합니다["'])[^>]*>/,
+  );
+  assert.match(
+    html,
+    /<meta(?=[^>]*\bproperty=["']og:description["'])(?=[^>]*윤재관 · 김정수의 장남 윤상호와 피터 퓌제서리 · 메기 퓌제서리의 차녀 스테프 퓌제서리의 혼례에 초대합니다\.)[^>]*>/,
+  );
+  assert.match(
+    html,
+    /<meta(?=[^>]*\bproperty=["']og:image["'])(?=[^>]*metadata-seal-transparent\.png)[^>]*>/,
+  );
 
   const firstVideo = html.indexOf("/videos/001-scroll.mp4");
   const firstDateVideo = html.indexOf("/videos/002-scroll.mp4");

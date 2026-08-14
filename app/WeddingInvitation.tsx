@@ -7,7 +7,11 @@ import { CalendarSaveButton } from "./components/common/CalendarSaveButton";
 import { EndingScrollVideo } from "./components/common/EndingScrollVideo";
 import { HorizontalStoryGallery } from "./components/common/HorizontalStoryGallery";
 import { GalleryPrelude } from "./components/common/GalleryPrelude";
-import { InvitationSeal, invitationSealSrc } from "./components/common/InvitationSeal";
+import {
+  InvitationSeal,
+  invitationMetadataSealSrc,
+  invitationSealSrc,
+} from "./components/common/InvitationSeal";
 import { MapChooser } from "./components/common/MapChooser";
 import { ScrollScrubVideo } from "./components/common/ScrollScrubVideo";
 import { getInvitationContent } from "./content/invitation";
@@ -22,11 +26,10 @@ import {
   getInitialVideoPreloadSources,
   preloadVideoFiles,
 } from "./lib/preload-videos";
+import { resolveDeviceLocale } from "./lib/locale";
 import { installStableKakaoScrollViewport } from "./lib/stable-scroll-viewport";
 import { useDeviceLocale } from "./lib/use-device-locale";
 import { createVideoScrubber } from "./lib/video-scrubber";
-
-const criticalAssets = [invitationSealSrc];
 
 const resetInitialScrollPosition = () => {
   if ("scrollRestoration" in window.history) {
@@ -332,6 +335,7 @@ export function WeddingInvitation({ autoMode = false }: WeddingInvitationProps) 
     details: detailsCopy,
     ending: endingCopy,
   } = getInvitationContent(locale);
+  const usesKoreanMetadataSeal = locale === "ko";
   const doorInvitationLines = personalizedInvitation
     ? doorCopy.personalizedInvitationLines(
         personalizedInvitation.recipientName,
@@ -357,7 +361,15 @@ export function WeddingInvitation({ autoMode = false }: WeddingInvitationProps) 
     document.body.classList.add("invitation-loading");
     resetInitialScrollPosition();
 
-    const assetPromises = criticalAssets.map(
+    const detectedLocale = resolveDeviceLocale(
+      navigator.languages.length > 0
+        ? navigator.languages
+        : [navigator.language],
+    );
+    const criticalSealSrc = detectedLocale === "ko"
+      ? invitationMetadataSealSrc
+      : invitationSealSrc;
+    const assetPromises = [criticalSealSrc].map(
       (src) =>
         new Promise<void>((resolve) => {
           const image = new window.Image();
@@ -803,8 +815,25 @@ export function WeddingInvitation({ autoMode = false }: WeddingInvitationProps) 
             className={`door-invitation${personalizedInvitation ? " is-personalized" : ""}`}
             data-door-invitation
           >
-            <InvitationSeal className="door-seal" priority />
-            <p>{doorCopy.coupleNames}</p>
+            <InvitationSeal
+              className={usesKoreanMetadataSeal ? "door-metadata-seal" : "door-seal"}
+              variant={usesKoreanMetadataSeal ? "metadata" : "square"}
+              alt={
+                usesKoreanMetadataSeal
+                  ? doorCopy.familyIntroductionLines?.join(". ")
+                  : ""
+              }
+              priority
+            />
+            {!usesKoreanMetadataSeal && doorCopy.familyIntroductionLines ? (
+              <div className="door-family-introduction">
+                {doorCopy.familyIntroductionLines.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </div>
+            ) : !usesKoreanMetadataSeal ? (
+              <p>{doorCopy.coupleNames}</p>
+            ) : null}
             <h1>
               {doorInvitationLines.map((line, index) => (
                 <span key={`${index}-${line}`}>{line}</span>

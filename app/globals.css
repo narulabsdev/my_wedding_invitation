@@ -551,7 +551,7 @@ select {
 .door-invitation {
   position: absolute;
   z-index: 7;
-  top: 21%;
+  top: 17%;
   left: 50%;
   width: min(84%, 360px);
   padding: 24px 18px 21px;
@@ -613,11 +613,29 @@ select {
   max-width: none;
 }
 
+.invitation-seal--metadata {
+  aspect-ratio: 1294 / 835;
+  overflow: visible;
+  filter: drop-shadow(0 5px 10px rgb(116 69 52 / 18%));
+}
+
+.invitation-seal--metadata .invitation-seal__image {
+  position: static;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
 .door-seal {
   position: absolute;
   top: 12px;
   right: 12px;
   width: 52px;
+}
+
+.door-metadata-seal {
+  width: 100%;
+  margin: 0 auto 13px;
 }
 
 .door-invitation p {
@@ -629,6 +647,39 @@ select {
   font-weight: 600;
   letter-spacing: 0.34em;
   text-align: left;
+}
+
+.door-family-introduction {
+  width: 100%;
+  margin: 0 0 15px;
+  padding-top: 2px;
+  color: #3d281c;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 5.4vw, 22px);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  line-height: 1.4;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.door-family-introduction span {
+  display: block;
+}
+
+.door-family-introduction span + span {
+  margin-top: 2px;
+}
+
+.door-family-introduction span:nth-child(2),
+.door-family-introduction span:nth-child(4) {
+  color: #27160f;
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.door-family-introduction span:nth-child(3) {
+  margin-top: 11px;
 }
 
 .door-invitation h1 {
@@ -672,6 +723,14 @@ select {
   transform: translate3d(-50%, -50%, 0);
   transition: opacity 650ms ease 280ms;
   will-change: opacity, transform;
+}
+
+.mobile-invitation[data-locale="ko"] .traditional-knot {
+  top: 76%;
+}
+
+.mobile-invitation[data-locale="ko"] .door-invitation {
+  width: min(94%, 390px);
 }
 
 .knot-loop,
@@ -2141,12 +2200,39 @@ select {
   justify-content: center;
 }
 
+.gallery-invitation-handoff--flow {
+  position: relative;
+  inset: auto;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.gallery-invitation-handoff--flow.is-personalized
+  .gallery-invitation-handoff__content {
+  box-sizing: border-box;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: clamp(64px, 9vh, 94px);
+  padding-bottom: clamp(92px, 13vh, 132px);
+}
+
 .gallery-invitation-handoff.is-personalized
   .gallery-invitation-handoff__body {
   max-width: 30ch;
   margin-top: clamp(22px, 4vh, 40px);
   font-size: clamp(13px, 3.7vw, 15px);
   line-height: 1.8;
+  white-space: normal;
+}
+
+.gallery-invitation-handoff__body-line {
+  display: block;
+}
+
+.gallery-invitation-handoff__body-line.is-blank {
+  height: 0.9em;
 }
 
 .gallery-invitation-handoff__seal {
